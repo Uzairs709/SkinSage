@@ -1,15 +1,13 @@
-import { Text, View } from "react-native";
+import React from "react";
+import { View } from "react-native";
+import SplashScreen from "@/components/pages/splashScreen"; // Ensure this path is correct
 
-export default function Index() {
+const Index: React.FC = () => {
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
+    <View style={{ flex: 1 }}>
+      <SplashScreen />
     </View>
   );
-}
+};
+
+export default Index;
