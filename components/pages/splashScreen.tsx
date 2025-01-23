@@ -23,17 +23,17 @@ const styles = StyleSheet.create({
   logoText: {
     fontSize: 48,
     fontWeight: "bold",
-    color: "#2E7D32",
+    color: "#3D6734",
     fontFamily: "serif",
     marginBottom: 20,
   },
   tagline: {
     fontSize: 16,
-    color: "#2E7D32",
+    color: "#3D6734",
     marginBottom: 40,
   },
   button: {
-    backgroundColor: "#2E7D32",
+    backgroundColor: "#3D6734",
     borderRadius: 25,
     paddingVertical: 15,
     paddingHorizontal: 40,
