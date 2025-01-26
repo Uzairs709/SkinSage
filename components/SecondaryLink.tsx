@@ -26,7 +26,7 @@ const SecondaryLink: React.FC<SecondaryLinkProps> = ({ text, onPress }) => {
 
 const styles = StyleSheet.create({
   linkText: {
-    fontSize: 14,
+    fontSize: 20,
     color: "#3D6734",
     textAlign: "center",
     fontWeight: "bold",
