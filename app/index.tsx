@@ -1,52 +1,45 @@
+import React from "react";
+import { View, StyleSheet } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import SplashScreen from "@/components/pages/splashScreen";
+import LoginScreen from "@/components/pages/LoginScreen";
 
-import React, { useEffect, useState } from "react";
-import { View } from "react-native";
-import SplashScreen from "@/components/pages/splashScreen"; // Ensure this path is correct
-import LoginScreen from "@/components/pages/LoginScreen"; // Ensure this path is correct
+const Stack = createStackNavigator();
 
-const Index: React.FC = () => {
-  const [showSplash, setShowSplash] = useState(true);
+const App: React.FC = () => {
+  const [showSplash, setShowSplash] = React.useState(true);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const timer = setTimeout(() => {
-      setShowSplash(false); // After 3 seconds, hide the splash screen
+      setShowSplash(false);
     }, 3000);
 
-    return () => clearTimeout(timer); // Cleanup the timer on component unmount
+    return () => clearTimeout(timer);
   }, []);
 
   return (
-    <View style={{ flex: 1 }}>
-      {showSplash ? <SplashScreen /> : <LoginScreen />}
+    <View style={styles.container}>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+          cardStyle: { backgroundColor: 'white' },
+        }}
+      >
+        {showSplash ? (
+          <Stack.Screen name="SplashScreen" component={SplashScreen} />
+        ) : (
+          <Stack.Screen name="LoginScreen" component={LoginScreen} />
+        )}
+      </Stack.Navigator>
     </View>
-  )
-}
-// import React from 'react';
-// import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
-// import ProfileHeader from '@/components/ProfileHeader';
-// import InfoField from '@/components/InfoField';
-// import PrimaryButton from '@/components/PrimaryButton';
+  );
+};
 
-// const Index = () => {
-//   return (
-//     <SafeAreaView style={styles.container}>
-//       <ScrollView>
-//         <ProfileHeader />
-//         <InfoField label="Name" value="Muhammad Arslan Naseer" labelWidth={43} />
-//       <InfoField label="Email" value="arslannaseer1@gmail.com" labelWidth={40} />
-//       <InfoField label="Licence No" value="MP123456" labelWidth={80} />
-//         <PrimaryButton label="Back to Home" onPress={() => alert('Back to Home pressed')} />
-//       </ScrollView>
-//     </SafeAreaView>
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
 
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#fff',
-//   },
-// });
-
-export default Index;
+export default App;
