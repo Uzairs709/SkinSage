@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import SplashScreen from "@/components/pages/splashScreen"; // Ensure this path is correct
@@ -19,8 +18,8 @@ const Index: React.FC = () => {
     <View style={{ flex: 1 }}>
       {showSplash ? <SplashScreen /> : <LoginScreen />}
     </View>
-  )
-}
+  );
+};
 // import React from 'react';
 // import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 // import ProfileHeader from '@/components/ProfileHeader';
