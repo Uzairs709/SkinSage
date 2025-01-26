@@ -1,52 +1,40 @@
+// pages/LoginPage.tsx
 import React from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  ImageBackground,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native";
+import { View, Text, StyleSheet, ImageBackground } from "react-native";
+import InputField from "../../components/InputField";
+import PrimaryButton from "../../components/PrimaryButton";
+import SecondaryLink from "../../components/SecondaryLink";
 
 const LoginScreen: React.FC = () => {
+  const handleLogin = () => {
+    // Add login functionality
+    console.log("Login Pressed");
+  };
+
+  const handleSignUp = () => {
+    // Navigate to Sign-Up Page
+    console.log("Sign-Up Pressed");
+  };
+
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ flex: 1 }}
+    <ImageBackground
+      source={require("../../assets/images/Green-Arc.png")} // Path to your background image
+      style={styles.headerContainer}
+      imageStyle={styles.backgroundImage}
+      resizeMode="cover"
     >
-      <ImageBackground
-        source={require("../../assets/images/Green-Arc.png")} // Use a compatible image format
-        style={styles.background}
-      >
-        <Text style={styles.login}>Login</Text>
+      <View style={styles.container}>
+        <Text style={styles.title}>Login</Text>
 
-        <View style={styles.container}>
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            placeholderTextColor="#888"
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            placeholderTextColor="#888"
-            secureTextEntry
-          />
-
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Login</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity>
-            <Text style={styles.createAccountLink}>
-              Don't have an account? Sign Up
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </ImageBackground>
-    </KeyboardAvoidingView>
+        <InputField placeholder="Email" />
+        <InputField placeholder="Password" secureTextEntry />
+        <PrimaryButton label="Login" onPress={handleLogin} />
+        <SecondaryLink
+          text="Don't have an account? Sign Up"
+          onPress={handleSignUp}
+        />
+      </View>
+    </ImageBackground>
   );
 };
 
@@ -56,47 +44,41 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  login: {
-    fontSize: 48,
+  backgroundImage: {
+    flex: 1, // Ensures the image fills the header container
+    width: "100%", // Ensures the image covers the full width of the container
+  },
+  title: {
+    fontSize: 36,
     fontWeight: "bold",
-    color: "#FFFFFF",
-    marginBottom: 20,
+    color: "#FFF",
+    fontFamily: "Epilogue",
+    position: "relative", // Absolute position to place the title in the center of the screen
+    bottom: "80%", // Adjust to center vertically on the screen
+
     textAlign: "center",
   },
   container: {
-    justifyContent: "center",
-    alignItems: "center",
+    width: "90%",
+    // backgroundColor: "rgba(255, 255, 255, 0.9)", // Semi-transparent background
     padding: 20,
-    width: "80%",
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
-    borderRadius: 10,
+    borderRadius: 12,
+    marginTop: "70%",
+    alignItems: "center",
   },
-  input: {
-    width: "100%",
-    height: 40,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    marginBottom: 12,
-    borderRadius: 10,
-    paddingLeft: 8,
-    backgroundColor: "#fff",
+  headerContainer: {
+    height: 400,
+    flex: 1, // Ensures the container takes up the full available space
+    justifyContent: "center", // Centers the content vertically
+    alignItems: "center", // Centers the content horizontally
+    paddingVertical: 20, // Adds padding to the top and bottom
+    overflow: "hidden", // Ensures the content stays within the rounded corners
   },
-  button: {
-    backgroundColor: "#3D6734",
-    borderRadius: 15,
-    paddingVertical: 10,
-    paddingHorizontal: 40,
-    marginBottom: 20,
-  },
-  buttonText: {
-    color: "#FFFFFF",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  createAccountLink: {
-    color: "#3D6734",
-    marginTop: 10,
-    fontWeight: "bold",
+
+  primaryButton: {
+    paddingVertical: 15, // Increase the vertical padding for bigger button
+    paddingHorizontal: 25, // Increase horizontal padding for bigger button
+    fontSize: 18, // Increase font size
   },
 });
 
