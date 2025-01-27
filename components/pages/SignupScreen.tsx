@@ -12,6 +12,8 @@ import { useNavigation } from "@react-navigation/native";
 const SignupScreen: React.FC = () => {
   const [selectedRole, setSelectedRole] = useState("Patient");
   const [gender, setGender] = useState("Male");
+  const [licenseNumber, setLicenseNumber] = useState("");
+
   const navigation = useNavigation();
 
   //   const navigation = useNavigation<NavigationProp<any>>(); // `any` type for simpler use case
@@ -76,28 +78,37 @@ const SignupScreen: React.FC = () => {
           editable={true}
         />
 
-        {/* Gender and Age */}
-        <View style={styles.row}>
-          <View style={styles.dropdownContainer}>
-            <Text style={styles.dropdownLabel}>Gender</Text>
-            <Picker
-              selectedValue={gender}
-              onValueChange={(itemValue) => setGender(itemValue)}
-              style={styles.dropdown}
-            >
-              <Picker.Item label="Male" value="Male" />
-              <Picker.Item label="Female" value="Female" />
-            </Picker>
-          </View>
+        {selectedRole === "Doctor" ? (
           <InfoField
-            label="Age"
+            label="License No"
             value=""
-            labelWidth={40}
-            placeholder="Enter Age"
+            labelWidth={80}
+            placeholder="Enter License No"
             editable={true}
-            style={styles.ageInput}
           />
-        </View>
+        ) : (
+          <View style={styles.row}>
+            <View style={styles.dropdownContainer}>
+              <Text style={styles.dropdownLabel}>Gender</Text>
+              <Picker
+                selectedValue={gender}
+                onValueChange={(itemValue) => setGender(itemValue)}
+                style={styles.dropdown}
+              >
+                <Picker.Item label="Male" value="Male" />
+                <Picker.Item label="Female" value="Female" />
+              </Picker>
+            </View>
+            <InfoField
+              label="Age"
+              value=""
+              labelWidth={40}
+              placeholder="Enter Age"
+              editable={true}
+              style={styles.ageInput}
+            />
+          </View>
+        )}
 
         {/* Signup Button */}
         <PrimaryButton label="Sign Up" onPress={handleSignup} />
