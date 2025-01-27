@@ -1,14 +1,25 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, Image } from "react-native";
+import PrimaryButton from "../PrimaryButton"; // Import your PrimaryButton component
 
 const SplashScreen: React.FC = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.logoText}>SkinSage</Text>
+      {/* Display the image */}
+      <Image
+        source={require("../../assets/images/skinsage.png")} // Path to the image file
+        style={styles.logoImage} // Apply styles to the image
+        resizeMode="contain" // Ensures the image fits without distortion
+      />
+      {/* Tagline */}
       <Text style={styles.tagline}>Analyze, Uncover, Nurture!</Text>
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Get started</Text>
-      </TouchableOpacity>
+      {/* Primary Button */}
+
+      <PrimaryButton
+        label="Get Started"
+        style={styles.btn} // Apply styles to the image
+        onPress={() => alert("Login pressed")}
+      />
     </View>
   );
 };
@@ -20,28 +31,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#FFFFFF",
   },
-  logoText: {
-    fontSize: 48,
-    fontWeight: "bold",
-    color: "#3D6734",
-    fontFamily: "serif",
+  logoImage: {
+    width: 320, // Adjust the size of the image as needed
+    height: 320,
     marginBottom: 20,
   },
   tagline: {
-    fontSize: 16,
+    fontSize: 22, // Increased size for the tagline
     color: "#3D6734",
-    marginBottom: 40,
-  },
-  button: {
-    backgroundColor: "#3D6734",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 40,
-  },
-  buttonText: {
-    color: "#FFFFFF",
-    fontSize: 18,
-    fontWeight: "bold",
+    textAlign: "center", // Center the tagline horizontally
+    marginBottom: -15, // Space between tagline and button
   },
 });
 

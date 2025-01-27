@@ -8,6 +8,7 @@ import LoginSignupHeader from "../LoginSignupHeader";
 import { Colors } from "@/constants/Colors";
 import { Picker } from "@react-native-picker/picker";
 import { useNavigation } from "@react-navigation/native";
+import RoleSwitch from "../../components/RoleSwitch";
 
 const SignupScreen: React.FC = () => {
   const [selectedRole, setSelectedRole] = useState("Patient");
@@ -15,8 +16,6 @@ const SignupScreen: React.FC = () => {
   const [licenseNumber, setLicenseNumber] = useState("");
 
   const navigation = useNavigation();
-
-  //   const navigation = useNavigation<NavigationProp<any>>(); // `any` type for simpler use case
 
   const handleSignup = () => {
     console.log("Sign-Up Pressed");
@@ -31,29 +30,12 @@ const SignupScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <LoginSignupHeader pagename={"Sign Up"} />
-
         {/* Role Switch */}
-        <View style={styles.switchContainer}>
-          <Text
-            style={[
-              styles.switchText,
-              selectedRole === "Doctor" && styles.activeSwitch,
-            ]}
-            onPress={() => setSelectedRole("Doctor")}
-          >
-            Doctor
-          </Text>
-          <Text
-            style={[
-              styles.switchText,
-              selectedRole === "Patient" && styles.activeSwitch,
-            ]}
-            onPress={() => setSelectedRole("Patient")}
-          >
-            Patient
-          </Text>
-        </View>
-
+        <RoleSwitch
+          selectedRole={selectedRole}
+          onRoleChange={setSelectedRole}
+        />{" "}
+        {/* Use RoleSwitch */}
         {/* Input Fields */}
         <InfoField
           label="Name"
@@ -77,7 +59,6 @@ const SignupScreen: React.FC = () => {
           placeholder="Enter Password"
           editable={true}
         />
-
         {selectedRole === "Doctor" ? (
           <InfoField
             label="License No"
@@ -109,7 +90,6 @@ const SignupScreen: React.FC = () => {
             />
           </View>
         )}
-
         {/* Signup Button */}
         <PrimaryButton label="Sign Up" onPress={handleSignup} />
         <Text style={styles.questionText}>Already have an account?</Text>
@@ -123,25 +103,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-  },
-  switchContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginVertical: 10,
-    marginTop: "-9%",
-  },
-  switchText: {
-    fontSize: 16,
-    padding: 10,
-    marginHorizontal: 10,
-    color: Colors.light.primary,
-    borderWidth: 1,
-    borderColor: Colors.light.primary,
-    borderRadius: 5,
-  },
-  activeSwitch: {
-    backgroundColor: Colors.light.primary,
-    color: "#fff",
   },
   row: {
     flexDirection: "row",
