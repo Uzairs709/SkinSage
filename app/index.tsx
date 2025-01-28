@@ -4,6 +4,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import SplashScreen from "@/components/pages/splashScreen";
 import LoginScreen from "@/components/pages/LoginScreen";
+import SignupScreen from "@/components/pages/SignupScreen";
 
 const Stack = createStackNavigator();
 
@@ -23,13 +24,15 @@ const App: React.FC = () => {
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
-          cardStyle: { backgroundColor: 'white' },
+          cardStyle: { backgroundColor: "white" },
         }}
       >
         {showSplash ? (
           <Stack.Screen name="SplashScreen" component={SplashScreen} />
         ) : (
-          <Stack.Screen name="LoginScreen" component={LoginScreen} />
+          // <Stack.Screen name="LoginScreen" component={LoginScreen} />
+
+          <Stack.Screen name="SignupScreen" component={SignupScreen} />
         )}
       </Stack.Navigator>
     </View>
