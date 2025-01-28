@@ -93,7 +93,7 @@ const SignupScreen: React.FC = () => {
         {/* Signup Button */}
         <PrimaryButton label="Sign Up" onPress={handleSignup} />
         <Text style={styles.questionText}>Already have an account?</Text>
-        <SecondaryLink text=" Login" onPress={handleLogin} />
+        <SecondaryLink text="Login" onPress={handleLogin} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -103,6 +103,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
+    paddingBottom:20,
   },
   row: {
     flexDirection: "row",

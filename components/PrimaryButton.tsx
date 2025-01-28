@@ -1,24 +1,31 @@
 // components/PrimaryButton.tsx
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, StyleProp, TextStyle, ViewStyle } from 'react-native';
 import { useFonts } from 'expo-font';
 
 interface PrimaryButtonProps {
   label: string; // The label is a string
   onPress: () => void; // onPress is a function that takes no arguments and returns nothing
+  width?: string | number; // Optional width for the button (can be a percentage or a number in pixels)
+  style?: StyleProp<ViewStyle>; // Custom styles for the button container
+  textStyle?: StyleProp<TextStyle>; // Custom styles for the button text
 }
 
-const PrimaryButton: React.FC<PrimaryButtonProps> = ({ label, onPress }) => {
+const PrimaryButton: React.FC<PrimaryButtonProps> = ({ label, onPress, width, style, textStyle }) => {
   let [fontsLoaded] = useFonts({
-        'Epilogue': require('../assets/fonts/Epilogue-VariableFont_wght.ttf'), // Load your custom font
-      });
-    
-      if (!fontsLoaded) {
-        return <Text>Loading...</Text>; // Show loading text while the font is being loaded
-      }
+    'Epilogue': require('../assets/fonts/Epilogue-VariableFont_wght.ttf'), // Load your custom font
+  });
+
+  if (!fontsLoaded) {
+    return <Text>Loading...</Text>; // Show loading text while the font is being loaded
+  }
+
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress}>
-      <Text style={styles.buttonText}>{label}</Text>
+    <TouchableOpacity 
+      style={[styles.button, { width: width || 'auto' }, style]} 
+      onPress={onPress}
+    >
+      <Text style={[styles.buttonText, textStyle]}>{label}</Text>
     </TouchableOpacity>
   );
 };
@@ -35,7 +42,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#fff',
     fontFamily: 'Epilogue',

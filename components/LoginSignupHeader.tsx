@@ -9,7 +9,7 @@ const LoginSignupHeader = ({pagename=""}) => {
   });
 
   if (!fontsLoaded) {
-    return <Text>Loading...</Text>; // Show loading text while the font is being loaded
+    return <></>; // Show loading text while the font is being loaded
   }
 
   return (
@@ -48,11 +48,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontFamily: 'Epilogue', // Apply the custom font
   },
-  profession: {
-    fontSize: 16,
-    color: '#fff',
-    fontFamily: 'Epilogue',
-  },
+  
 });
 
 export default LoginSignupHeader;

@@ -13,11 +13,10 @@ const SecondaryLink: React.FC<SecondaryLinkProps> = ({ text, onPress }) => {
     Epilogue: require("../assets/fonts/Epilogue-VariableFont_wght.ttf"),
   });
 
-  if (!fontsLoaded) {
-    return null;
-  }
+ 
 
   return (
+    
     <TouchableOpacity onPress={onPress}>
       <Text style={styles.linkText}>{text}</Text>
     </TouchableOpacity>

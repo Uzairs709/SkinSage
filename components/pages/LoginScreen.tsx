@@ -30,7 +30,9 @@ const LoginScreen: React.FC = () => {
   let [fontsLoaded] = useFonts({
     Epilogue: require("../../assets/fonts/Epilogue-VariableFont_wght.ttf"), // Load your custom font
   });
-
+  if(!fontsLoaded){
+    return<></>
+  }
   const handleSignUp = () => {
     navigation.navigate("SignupScreen");
   };
