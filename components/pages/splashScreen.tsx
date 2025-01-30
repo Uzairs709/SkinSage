@@ -8,7 +8,7 @@ const SplashScreen: React.FC = () => {
   const navigation = useNavigation(); // Access the navigation object
 
   let [fontsLoaded] = useFonts({
-    "Euphoria": require("../../assets/fonts/EuphoriaScript-Regular.ttf"), // Load your custom font
+    Euphoria: require("../../assets/fonts/EuphoriaScript-Regular.ttf"), // Load your custom font
   });
 
   const handleGetStarted = () => {
