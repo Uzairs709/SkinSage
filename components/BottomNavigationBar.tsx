@@ -57,12 +57,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     paddingVertical: 16,
-    borderTopLeftRadius: 2,
-    borderTopRightRadius: 2,
     width: "100%",
   },
   navIcon: {
-    fontSize: 30,
+    fontSize: 28,
   },
   centerIcon: {
     backgroundColor: "#3D6734",
