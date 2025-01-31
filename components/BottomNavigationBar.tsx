@@ -27,7 +27,7 @@ const BottomNavigationBar: React.FC = () => {
           name="camera-alt"
           style={styles.navIcon}
           color={Colors.light.background}
-          onPress={() => alert("Open camera here")}
+          onPress={() => navigation.navigate("ScanScreen")}
         />
       </View>
       <Icon
@@ -72,3 +72,84 @@ const styles = StyleSheet.create({
 });
 
 export default BottomNavigationBar;
+
+// import React from "react";
+// import { StyleSheet, TouchableOpacity } from "react-native";
+// import Icon from "react-native-vector-icons/Feather";
+// import IconCamera from "react-native-vector-icons/MaterialIcons";
+// import { Colors } from "@/constants/Colors";
+// import { Tabs } from "expo-router";
+
+// const BottomNavigationBar: React.FC = () => {
+//   return (
+//     <Tabs>
+//       <Tabs.Screen
+//         name="Home"
+//         options={{
+//           title: "Home",
+//           tabBarIcon: ({ color }) => (
+//             <Icon name="home" size={28} color={color} />
+//           ),
+//         }}
+//       />
+
+//       <Tabs.Screen
+//         name="Search"
+//         options={{
+//           title: "Search",
+//           tabBarIcon: ({ color }) => (
+//             <Icon name="search" size={28} color={color} />
+//           ),
+//         }}
+//       />
+
+//       <Tabs.Screen
+//         name="CameraScreen"
+//         options={{
+//           title: "",
+//           tabBarButton: (props) => (
+//             <TouchableOpacity style={styles.centerIcon} {...props}>
+//               <IconCamera
+//                 name="camera-alt"
+//                 size={28}
+//                 color={Colors.light.background}
+//               />
+//             </TouchableOpacity>
+//           ),
+//         }}
+//       />
+
+//       <Tabs.Screen
+//         name="Notifications"
+//         options={{
+//           title: "Alerts",
+//           tabBarIcon: ({ color }) => (
+//             <Icon name="bell" size={28} color={color} />
+//           ),
+//         }}
+//       />
+
+//       <Tabs.Screen
+//         name="UserProfile"
+//         options={{
+//           title: "Profile",
+//           tabBarIcon: ({ color }) => (
+//             <Icon name="user" size={28} color={color} />
+//           ),
+//         }}
+//       />
+//     </Tabs>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   centerIcon: {
+//     backgroundColor: "#3D6734", // Background color for the camera button
+//     padding: 8, // Padding around the icon
+//     borderRadius: 50, // Make the button circular
+//     elevation: 50, // Elevation for shadow effect
+//     marginBottom: 5, // Space below the button
+//   },
+// });
+
+// export default BottomNavigationBar;

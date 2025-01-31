@@ -9,6 +9,8 @@ import SplashScreen from "@/components/pages/splashScreen";
 import LoginScreen from "@/components/pages/LoginScreen";
 import SignupScreen from "@/components/pages/SignupScreen";
 import DoctorDashboard from "@/components/pages/DoctorDashboard";
+import ScanScreen from "@/components/pages/ScanScreen"; // Import ScanScreen
+import CameraScreen from "@/components/pages/CameraScreen"; // Import ScanScreen
 
 import { Colors } from "@/constants/Colors";
 type RootStackParamList = {
@@ -16,6 +18,8 @@ type RootStackParamList = {
   LoginScreen: undefined; // No parameters for LoginScreen
   SignupScreen: undefined; // No parameters for LoginScreen
   DoctorDashboard: undefined; // Add DoctorDashboard screen
+  ScanScreen: undefined; // Add ScanScreen type
+  CameraScreen: undefined; // Add ScanScreen type
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -33,6 +37,8 @@ const App: React.FC = () => {
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
         <Stack.Screen name="SignupScreen" component={SignupScreen} />
         <Stack.Screen name="DoctorDashboard" component={DoctorDashboard} />
+        <Stack.Screen name="ScanScreen" component={ScanScreen} />
+        <Stack.Screen name="CameraScreen" component={CameraScreen} />
       </Stack.Navigator>
     </View>
   );
@@ -45,4 +51,3 @@ const styles = StyleSheet.create({
 });
 
 export default App;
-
