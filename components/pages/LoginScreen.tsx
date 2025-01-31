@@ -23,10 +23,7 @@ const LoginScreen: React.FC = () => {
 
   const navigation = useNavigation();
 
-  const handleLogin = () => {
-    // Add login functionality
-    console.log("Login Pressed");
-  };
+ 
   let [fontsLoaded] = useFonts({
     Epilogue: require("../../assets/fonts/Epilogue-VariableFont_wght.ttf"), // Load your custom font
   });
@@ -36,6 +33,11 @@ const LoginScreen: React.FC = () => {
   const handleSignUp = () => {
     navigation.navigate("SignupScreen");
   };
+
+  const handleLogin = () =>{
+    navigation.navigate("DoctorDashboard");
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
@@ -55,7 +57,7 @@ const LoginScreen: React.FC = () => {
           placeholder="Enter Password"
           editable={true}
         />
-        <PrimaryButton label="Login" onPress={() => alert("Login pressed")} />
+        <PrimaryButton label="Login" onPress={handleLogin} />
         <Text style={styles.questionText}> Don't have an account?</Text>
         <SecondaryLink text=" Sign Up" onPress={handleSignUp} />
       </ScrollView>

@@ -1,60 +1,39 @@
-// import React from "react";
-// import { View, StyleSheet } from "react-native";
-// import { NavigationContainer } from "@react-navigation/native";
-// import {
-//   createStackNavigator,
-//   StackNavigationProp,
-// } from "@react-navigation/stack";
-// import SplashScreen from "@/components/pages/splashScreen";
-// // import LoginScreen from "@/components/pages/LoginScreen";
-// // import SignupScreen from "@/components/pages/SignupScreen";
-// import DoctorDashboard from "@/components/pages/DoctorDashboard";
-
-// import { Colors } from "@/constants/Colors";
-// type RootStackParamList = {
-//   SplashScreen: undefined; // No parameters for SplashScreen
-//   // LoginScreen: undefined; // No parameters for LoginScreen
-//   // SignupScreen: undefined; // No parameters for LoginScreen
-//   DoctorDashboard: undefined; // Add DoctorDashboard screen
-// };
-
-// const Stack = createStackNavigator<RootStackParamList>();
-
-// const App: React.FC = () => {
-//   return (
-//     <View style={styles.container}>
-//       <Stack.Navigator
-//         screenOptions={{
-//           headerShown: false,
-//           headerTintColor: Colors.light.primary,
-//         }}
-//       >
-//         <Stack.Screen name="SplashScreen" component={SplashScreen} />
-//         {/* <Stack.Screen name="LoginScreen" component={LoginScreen} />
-//         <Stack.Screen name="SignupScreen" component={SignupScreen} /> */}
-//         <Stack.Screen name="DoctorDashboard" component={DoctorDashboard} />{" "}
-//         {/* Add Doctor Dashboard screen */}
-//       </Stack.Navigator>
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//   },
-// });
-
-// export default App;
-
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import DoctorDashboard from "../components/pages/DoctorDashboard";
+import { NavigationContainer } from "@react-navigation/native";
+import {
+  createStackNavigator,
+  StackNavigationProp,
+} from "@react-navigation/stack";
+import SplashScreen from "@/components/pages/splashScreen";
+import LoginScreen from "@/components/pages/LoginScreen";
+import SignupScreen from "@/components/pages/SignupScreen";
+import DoctorDashboard from "@/components/pages/DoctorDashboard";
 
-const App = () => {
+import { Colors } from "@/constants/Colors";
+type RootStackParamList = {
+  SplashScreen: undefined; // No parameters for SplashScreen
+  LoginScreen: undefined; // No parameters for LoginScreen
+  SignupScreen: undefined; // No parameters for LoginScreen
+  DoctorDashboard: undefined; // Add DoctorDashboard screen
+};
+
+const Stack = createStackNavigator<RootStackParamList>();
+
+const App: React.FC = () => {
   return (
     <View style={styles.container}>
-      <DoctorDashboard /> {/* Directly displaying the DoctorDashboard */}
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+          headerTintColor: Colors.light.primary,
+        }}
+      >
+        <Stack.Screen name="SplashScreen" component={SplashScreen} />
+        <Stack.Screen name="LoginScreen" component={LoginScreen} />
+        <Stack.Screen name="SignupScreen" component={SignupScreen} />
+        <Stack.Screen name="DoctorDashboard" component={DoctorDashboard} />
+      </Stack.Navigator>
     </View>
   );
 };
@@ -62,9 +41,8 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
   },
 });
 
 export default App;
+

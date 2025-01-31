@@ -10,8 +10,8 @@ const UpcomingAppointments: React.FC = () => (
         <Text>Tue</Text>
       </View>
       <View style={styles.appointmentDetails}>
-        <Text style={styles.doctorName}>Dr. David Smith</Text>
-        <Text style={styles.doctorSpeciality}>Dermatologist</Text>
+        <Text style={styles.patientName}>Mr. Smith</Text>
+        <Text style={styles.patientDescription}>Eczema Ptient</Text>
       </View>
       <Text style={styles.appointmentTime}>10:30 am</Text>
     </View>
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   appointmentCard: {
     backgroundColor: "#f3f3f3",
     padding: 16,
-    borderRadius: 8,
+    borderRadius: 10,
     elevation: 5, // For shadow effect in React Native (Android)
     shadowColor: "#000", // For shadow effect (iOS)
     shadowOffset: { width: 0, height: 2 },
@@ -43,6 +43,12 @@ const styles = StyleSheet.create({
   },
   appointmentDate: {
     textAlign: "center",
+    backgroundColor:"#fff",
+    paddingTop:5,
+    paddingBottom:5,
+    paddingLeft:15,
+    paddingRight:15,
+    borderRadius:10,
   },
   appointmentDay: {
     fontSize: 24,
@@ -59,6 +65,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     borderRadius: 50,
   },
+  patientName:{
+    fontWeight: 'bold',
+  },
+  patientDescription:{
+    fontWeight: 'bold',
+  }
 });
 
 export default UpcomingAppointments;

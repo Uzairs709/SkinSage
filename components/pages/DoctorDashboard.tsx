@@ -17,7 +17,7 @@ const DoctorDashboard: React.FC = () => (
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1, // Ensures the container takes up the full screen height and width
-    backgroundColor: "#f3f3f3", // Set background color for the whole screen
+    backgroundColor: "#fff", // Set background color for the whole screen
   },
   dashboardContainer: {
     flexGrow: 1, // Allows content to take up all available space inside ScrollView
