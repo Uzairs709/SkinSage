@@ -1,8 +1,8 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import ScanCard from "../../components/ScanCard";
-import BottomNavigationBar from "./../BottomNavigationBar";
+import ScanCard from "@/components/ScanCard";
+import BottomNavigationBar from "@/app/(tabs)/_layout";
 
 const ScanTitle = () => (
   <>
@@ -13,11 +13,10 @@ const ScanTitle = () => (
   </>
 );
 
-const ScanScreen = () => {
+export default function scan() {
   const navigation = useNavigation();
 
   const handleProceed = () => {
-    navigation.navigate("CameraScreen"); // Ensure 'CameraScreen' exists in your navigation stack
   };
 
   return (
@@ -47,4 +46,3 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ScanScreen;

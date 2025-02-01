@@ -2,17 +2,16 @@ import React from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import PrimaryButton from "../PrimaryButton"; // Import your PrimaryButton component
+import PrimaryButton from "@/components/PrimaryButton"; // Import your PrimaryButton component
 
-const SplashScreen: React.FC = () => {
+export default function splash () {
   const navigation = useNavigation(); // Access the navigation object
 
   let [fontsLoaded] = useFonts({
-    Euphoria: require("../../assets/fonts/EuphoriaScript-Regular.ttf"), // Load your custom font
+    Euphoria: require("@/assets/fonts/EuphoriaScript-Regular.ttf"), // Load your custom font
   });
 
   const handleGetStarted = () => {
-    navigation.navigate("LoginScreen"); // Navigate to LoginScreen
   };
 
   if (!fontsLoaded) {
@@ -23,7 +22,7 @@ const SplashScreen: React.FC = () => {
     <View style={styles.container}>
       {/* Display the image */}
       <Image
-        source={require("../../assets/images/skinsage.png")} // Path to the image file
+        source={require("@/assets/images/skinsage.png")} // Path to the image file
         style={styles.logoImage} // Apply styles to the image
         resizeMode="contain" // Ensures the image fits without distortion
       />
@@ -66,4 +65,3 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SplashScreen;

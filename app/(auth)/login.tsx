@@ -1,24 +1,21 @@
 // pages/LoginPage.tsx
 import React from "react";
 import {
-  View,
   Text,
   StyleSheet,
-  ImageBackground,
   SafeAreaView,
   ScrollView,
 } from "react-native";
-import InfoField from "../../components/InfoField";
-import PrimaryButton from "../../components/PrimaryButton";
-import SecondaryLink from "../../components/SecondaryLink";
-import LoginSignupHeader from "../LoginSignupHeader";
+import InfoField from "@/components/InfoField";
+import PrimaryButton from "@/components/PrimaryButton";
+import SecondaryLink from "@/components/SecondaryLink";
+import LoginSignupHeader from "@/components/LoginSignupHeader";
 import { Colors } from "@/constants/Colors";
 import { useFonts } from "expo-font";
 
 import { useNavigation } from "@react-navigation/native";
-import SignupScreen from "./SignupScreen";
 
-const LoginScreen: React.FC = () => {
+export default function LoginScreen (){
   //   const navigation = useNavigation<NavigationProp<any>>(); // `any` type for simpler use case
 
   const navigation = useNavigation();
@@ -31,11 +28,9 @@ const LoginScreen: React.FC = () => {
     return<></>
   }
   const handleSignUp = () => {
-    navigation.navigate("SignupScreen");
   };
 
   const handleLogin = () =>{
-    navigation.navigate("DoctorDashboard");
   };
 
   return (
@@ -78,4 +73,3 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;

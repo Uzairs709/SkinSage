@@ -1,16 +1,16 @@
 // pages/SignupScreen.tsx
 import React, { useState } from "react";
 import { View, Text, StyleSheet, SafeAreaView, ScrollView } from "react-native";
-import InfoField from "../InfoField";
-import PrimaryButton from "../PrimaryButton";
-import SecondaryLink from "../SecondaryLink";
-import LoginSignupHeader from "../LoginSignupHeader";
+import InfoField from "@/components/InfoField";
+import PrimaryButton from "@/components/PrimaryButton";
+import SecondaryLink from "@/components/SecondaryLink";
+import LoginSignupHeader from "@/components/LoginSignupHeader";
 import { Colors } from "@/constants/Colors";
 import { Picker } from "@react-native-picker/picker";
 import { useNavigation } from "@react-navigation/native";
-import RoleSwitch from "../../components/RoleSwitch";
+import RoleSwitch from "@/components/RoleSwitch";
 
-const SignupScreen: React.FC = () => {
+export default function signup (){
   const [selectedRole, setSelectedRole] = useState("Patient");
   const [gender, setGender] = useState("Male");
   const [licenseNumber, setLicenseNumber] = useState("");
@@ -23,7 +23,6 @@ const SignupScreen: React.FC = () => {
   };
 
   const handleLogin = () => {
-    // navigation.navigate("LoginScreen");
   };
 
   return (
@@ -86,7 +85,7 @@ const SignupScreen: React.FC = () => {
               labelWidth={40}
               placeholder="Enter Age"
               editable={true}
-              style={styles.ageInput}
+              // style={styles.ageInput}
             />
           </View>
         )}
@@ -140,4 +139,3 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SignupScreen;

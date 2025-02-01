@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Button, Image, StyleSheet } from "react-native";
 import { launchCamera } from "react-native-image-picker";
 
-const CameraScreen = () => {
+export default function samera_screen (){
   const [photo, setPhoto] = useState(null);
 
   const openCamera = async () => {
@@ -36,4 +36,3 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CameraScreen;

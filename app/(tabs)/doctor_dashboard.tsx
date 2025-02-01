@@ -1,10 +1,11 @@
 import React from "react";
 import { View, ScrollView, StyleSheet, SafeAreaView } from "react-native";
-import DoctorProfile from "./../DoctorProfile";
-import UpcomingAppointments from "./../UpcomingAppointments";
-import BottomNavigationBar from "./../BottomNavigationBar";
+import DoctorProfile from "@/components/DoctorProfile";
+import UpcomingAppointments from "@/components/UpcomingAppointments";
+import BottomNavigationBar from "@/app/(tabs)/_layout";
 
-const DoctorDashboard: React.FC = () => (
+export default function doctor_dashboard(){
+  return (
   <SafeAreaView style={styles.safeArea}>
     <ScrollView contentContainerStyle={styles.dashboardContainer}>
       <DoctorProfile />
@@ -12,7 +13,8 @@ const DoctorDashboard: React.FC = () => (
       <BottomNavigationBar />
     </ScrollView>
   </SafeAreaView>
-);
+  )
+};
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -27,4 +29,3 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DoctorDashboard;
