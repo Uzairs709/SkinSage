@@ -9,7 +9,7 @@ import { Colors } from "@/constants/Colors";
 import { Picker } from "@react-native-picker/picker";
 import { useNavigation } from "@react-navigation/native";
 import RoleSwitch from "@/components/RoleSwitch";
-
+import { router } from "expo-router";
 export default function signup (){
   const [selectedRole, setSelectedRole] = useState("Patient");
   const [gender, setGender] = useState("Male");
@@ -18,11 +18,11 @@ export default function signup (){
   const navigation = useNavigation();
 
   const handleSignup = () => {
-    console.log("Sign-Up Pressed");
-    // Implement signup logic here
+   router.navigate("/(tabs)/doctor_dashboard")
   };
 
   const handleLogin = () => {
+    router.navigate("/login")
   };
 
   return (
@@ -33,7 +33,7 @@ export default function signup (){
         <RoleSwitch
           selectedRole={selectedRole}
           onRoleChange={setSelectedRole}
-        />{" "}
+        />
         {/* Use RoleSwitch */}
         {/* Input Fields */}
         <InfoField
@@ -82,7 +82,7 @@ export default function signup (){
             <InfoField
               label="Age"
               value=""
-              labelWidth={40}
+              labelWidth={50}
               placeholder="Enter Age"
               editable={true}
               // style={styles.ageInput}

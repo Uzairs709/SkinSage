@@ -14,6 +14,7 @@ import { Colors } from "@/constants/Colors";
 import { useFonts } from "expo-font";
 
 import { useNavigation } from "@react-navigation/native";
+import { router } from "expo-router";
 
 export default function LoginScreen (){
   //   const navigation = useNavigation<NavigationProp<any>>(); // `any` type for simpler use case
@@ -28,9 +29,11 @@ export default function LoginScreen (){
     return<></>
   }
   const handleSignUp = () => {
+    router.navigate("/signup")
   };
 
   const handleLogin = () =>{
+    router.navigate("/(tabs)/doctor_dashboard")
   };
 
   return (

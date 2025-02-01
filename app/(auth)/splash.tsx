@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import PrimaryButton from "@/components/PrimaryButton"; // Import your PrimaryButton component
+import { router } from "expo-router";
 
 export default function splash () {
   const navigation = useNavigation(); // Access the navigation object
@@ -11,7 +12,15 @@ export default function splash () {
     Euphoria: require("@/assets/fonts/EuphoriaScript-Regular.ttf"), // Load your custom font
   });
 
-  const handleGetStarted = () => {
+  const handleGetStarted = async() => {
+    try{
+    router.navigate("/login");
+    }catch(e){
+      console.log("error while login")
+    }
+    finally{
+      
+    }
   };
 
   if (!fontsLoaded) {
