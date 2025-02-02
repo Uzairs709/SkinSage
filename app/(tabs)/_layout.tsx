@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity, View,Text } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 import IconCamera from "react-native-vector-icons/MaterialIcons";
 import { Colors } from "@/constants/Colors";
@@ -10,6 +10,7 @@ export default function TabLayout() {
       screenOptions={{
         tabBarShowLabel: false,
         tabBarStyle: styles.bottomNav,
+        tabBarActiveTintColor: Colors.light.primary,
       }}
     >
       {/* Home Tab */}
@@ -22,17 +23,7 @@ export default function TabLayout() {
         }}
       />
 
-      {/* Search Tab */}
-      {/* <Tabs.Screen
-        name="search"
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <Icon name="search" size={size} color={color} />
-          ),
-        }}
-      /> */}
-
-      {/* Center Camera Button */}
+      {/* Camera (Scan) Tab */}
       <Tabs.Screen
         name="scan"
         options={{
@@ -40,33 +31,27 @@ export default function TabLayout() {
         }}
       />
 
-      {/* Notifications Tab */}
-      {/* <Tabs.Screen
-        name="notifications"
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <Icon name="bell" size={size} color={color} />
-          ),
-        }}
-      /> */}
-
       {/* Profile Tab */}
-      {/* <Tabs.Screen
+      <Tabs.Screen
         name="profile"
         options={{
           tabBarIcon: ({ color, size }) => (
             <Icon name="user" size={size} color={color} />
           ),
         }}
-      /> */}
+      />
     </Tabs>
   );
 }
 
-// 🔹 Fix: Separate Component for Camera Button
-const CameraButton = (props: any) => (
-  <TouchableOpacity {...props} style={[styles.centerIcon, props.style]}>
-    <IconCamera name="camera-alt" size={28} color={"#fff"} />
+// ✅ Fixed Camera Button Component
+const CameraButton = ({ onPress, ...props }: any) => (
+  <TouchableOpacity onPress={onPress} style={[styles.cameraButton, props.style]}>
+    <View style={styles.cameraButtonInner}>
+      <Text>
+      <IconCamera name="camera-alt" size={28} color={"#fff"} />
+      </Text>
+    </View>
   </TouchableOpacity>
 );
 
@@ -87,13 +72,22 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: -2 },
   },
-  centerIcon: {
-    backgroundColor: Colors.light.primary,
-    padding: 12,
-    borderRadius: 50,
+  cameraButton: {
     position: "absolute",
-    bottom: 20,
+    bottom: 5, // Moves it slightly above the navbar
     alignSelf: "center",
-    elevation: 5,
+  },
+  cameraButtonInner: {
+    backgroundColor: Colors.light.primary,
+    width: 56, // Fixed width for perfect circle
+    height: 56, // Fixed height for perfect circle
+    borderRadius: 28, // Half of width/height to make it round
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 5, // Adds shadow on Android
+    shadowColor: "#000",
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 5,
   },
 });

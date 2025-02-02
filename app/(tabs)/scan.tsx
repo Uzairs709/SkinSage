@@ -1,8 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import ScanCard from "@/components/ScanCard";
-import BottomNavigationBar from "@/app/(tabs)/_layout";
 
 const ScanTitle = () => (
   <>
@@ -14,7 +12,6 @@ const ScanTitle = () => (
 );
 
 export default function scan() {
-  const navigation = useNavigation();
 
   const handleProceed = () => {
   };
@@ -23,7 +20,6 @@ export default function scan() {
     <View style={styles.container}>
       <ScanTitle />
       <ScanCard onPress={handleProceed} />
-      <BottomNavigationBar /> {/* Add the Bottom Navigation Bar */}
     </View>
   );
 };
