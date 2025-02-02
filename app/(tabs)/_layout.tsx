@@ -48,9 +48,7 @@ export default function TabLayout() {
 const CameraButton = ({ onPress, ...props }: any) => (
   <TouchableOpacity onPress={onPress} style={[styles.cameraButton, props.style]}>
     <View style={styles.cameraButtonInner}>
-      <Text>
       <IconCamera name="camera-alt" size={28} color={"#fff"} />
-      </Text>
     </View>
   </TouchableOpacity>
 );
