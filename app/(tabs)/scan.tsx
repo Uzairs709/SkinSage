@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import ScanCard from "@/components/ScanCard";
+import { router } from "expo-router";
 
 const ScanTitle = () => (
   <>
@@ -14,6 +15,7 @@ const ScanTitle = () => (
 export default function scan() {
 
   const handleProceed = () => {
+    router.navigate("/camera_screen")
   };
 
   return (
