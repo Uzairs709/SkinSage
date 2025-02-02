@@ -3,6 +3,7 @@ import { StyleSheet, TouchableOpacity, View,Text } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 import IconCamera from "react-native-vector-icons/MaterialIcons";
 import { Colors } from "@/constants/Colors";
+import { HapticTab } from "@/components/HapticTab";
 
 export default function TabLayout() {
   return (
@@ -11,6 +12,9 @@ export default function TabLayout() {
         tabBarShowLabel: false,
         tabBarStyle: styles.bottomNav,
         tabBarActiveTintColor: Colors.light.primary,
+        headerShown:false,
+        tabBarButton: HapticTab,
+        
       }}
     >
       {/* Home Tab */}
