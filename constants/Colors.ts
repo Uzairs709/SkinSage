@@ -4,5 +4,12 @@ export const Colors = {
     text: "#000000",
     background: "#ffffff",
     primary: "#3D6734", // Green color
+    blackOutline: "#000000",
+  },
+  dark: {
+    text: "#000000",
+    background: "#ffffff",
+    primary: "#3D6734", // Green color
+    blackOutline: "#000000",
   },
 };

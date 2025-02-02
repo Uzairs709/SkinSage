@@ -1,29 +1,28 @@
 // pages/SignupScreen.tsx
 import React, { useState } from "react";
 import { View, Text, StyleSheet, SafeAreaView, ScrollView } from "react-native";
-import InfoField from "../InfoField";
-import PrimaryButton from "../PrimaryButton";
-import SecondaryLink from "../SecondaryLink";
-import LoginSignupHeader from "../LoginSignupHeader";
+import InfoField from "@/components/InfoField";
+import PrimaryButton from "@/components/PrimaryButton";
+import SecondaryLink from "@/components/SecondaryLink";
+import LoginSignupHeader from "@/components/LoginSignupHeader";
 import { Colors } from "@/constants/Colors";
 import { Picker } from "@react-native-picker/picker";
 import { useNavigation } from "@react-navigation/native";
-import RoleSwitch from "../../components/RoleSwitch";
-
-const SignupScreen: React.FC = () => {
-  const [selectedRole, setSelectedRole] = useState("Patient");
+import RoleSwitch from "@/components/RoleSwitch";
+import { router } from "expo-router";
+export default function signup() {
+  const [selectedRole, setSelectedRole] = useState("Doctor");
   const [gender, setGender] = useState("Male");
   const [licenseNumber, setLicenseNumber] = useState("");
 
   const navigation = useNavigation();
 
   const handleSignup = () => {
-    console.log("Sign-Up Pressed");
-    // Implement signup logic here
+    router.navigate("/(tabs)/doctor_dashboard")
   };
 
   const handleLogin = () => {
-    // navigation.navigate("LoginScreen");
+    router.navigate("/login")
   };
 
   return (
@@ -34,7 +33,7 @@ const SignupScreen: React.FC = () => {
         <RoleSwitch
           selectedRole={selectedRole}
           onRoleChange={setSelectedRole}
-        />{" "}
+        />
         {/* Use RoleSwitch */}
         {/* Input Fields */}
         <InfoField
@@ -69,25 +68,31 @@ const SignupScreen: React.FC = () => {
           />
         ) : (
           <View style={styles.row}>
-            <View style={styles.dropdownContainer}>
-              <Text style={styles.dropdownLabel}>Gender</Text>
-              <Picker
-                selectedValue={gender}
-                onValueChange={(itemValue) => setGender(itemValue)}
-                style={styles.dropdown}
-              >
-                <Picker.Item label="Male" value="Male" />
-                <Picker.Item label="Female" value="Female" />
-              </Picker>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Gender</Text>
+              <View style={styles.pickerWrapper}>
+                <Picker
+                  selectedValue={gender}
+                  onValueChange={(itemValue) => setGender(itemValue)}
+                  style={styles.picker}
+                  dropdownIconColor={"#6B7280"} // Ensures arrow visibility
+                >
+                  <Picker.Item label="Select Gender" value="" />
+                  <Picker.Item label="Male" value="Male" />
+                  <Picker.Item label="Female" value="Female" />
+                </Picker>
+              </View>
             </View>
-            <InfoField
-              label="Age"
-              value=""
-              labelWidth={40}
-              placeholder="Enter Age"
-              editable={true}
-              style={styles.ageInput}
-            />
+
+            <View style={styles.inputContainer}>
+              <InfoField
+                label="Age"
+                value=""
+                labelWidth={35}
+                placeholder="Enter Age"
+                editable={true}
+              />
+            </View>
           </View>
         )}
         {/* Signup Button */}
@@ -103,13 +108,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    paddingBottom:20,
-  },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginHorizontal: 25,
-    marginVertical: 10,
+    paddingBottom: 20,
   },
   dropdownContainer: {
     flex: 1,
@@ -138,6 +137,41 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginVertical: 10,
   },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems:"center",
+    marginHorizontal: 20,
+    marginVertical: 10,
+    width:"96%"
+  },
+  inputContainer: {
+    flex: 1,
+    marginHorizontal: 5,
+  },
+  label: {
+    fontSize: 14,
+    color: "#3D6734", // Matching the InfoField label color
+    marginBottom: -8,
+    marginLeft: 13,
+    backgroundColor: "#fff",
+    zIndex: 1,
+    fontFamily: "Epilogue",
+    fontWeight: "500",
+  },
+  pickerWrapper: {
+    backgroundColor: "#fff",
+    borderColor: "#D1D5DB",
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    justifyContent: "center",
+    height: 50, // Ensures proper height
+  },
+  picker: {
+    height: 50,
+    fontSize: 16,
+    color: "#000",
+  },
 });
 
-export default SignupScreen;

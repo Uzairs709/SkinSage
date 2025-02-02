@@ -1,32 +1,27 @@
 // pages/LoginPage.tsx
 import React from "react";
 import {
-  View,
   Text,
   StyleSheet,
-  ImageBackground,
   SafeAreaView,
   ScrollView,
 } from "react-native";
-import InfoField from "../../components/InfoField";
-import PrimaryButton from "../../components/PrimaryButton";
-import SecondaryLink from "../../components/SecondaryLink";
-import LoginSignupHeader from "../LoginSignupHeader";
+import InfoField from "@/components/InfoField";
+import PrimaryButton from "@/components/PrimaryButton";
+import SecondaryLink from "@/components/SecondaryLink";
+import LoginSignupHeader from "@/components/LoginSignupHeader";
 import { Colors } from "@/constants/Colors";
 import { useFonts } from "expo-font";
 
 import { useNavigation } from "@react-navigation/native";
-import SignupScreen from "./SignupScreen";
+import { router } from "expo-router";
 
-const LoginScreen: React.FC = () => {
+export default function LoginScreen (){
   //   const navigation = useNavigation<NavigationProp<any>>(); // `any` type for simpler use case
 
   const navigation = useNavigation();
 
-  const handleLogin = () => {
-    // Add login functionality
-    console.log("Login Pressed");
-  };
+ 
   let [fontsLoaded] = useFonts({
     Epilogue: require("../../assets/fonts/Epilogue-VariableFont_wght.ttf"), // Load your custom font
   });
@@ -34,8 +29,13 @@ const LoginScreen: React.FC = () => {
     return<></>
   }
   const handleSignUp = () => {
-    navigation.navigate("SignupScreen");
+    router.navigate("/signup")
   };
+
+  const handleLogin = () =>{
+    router.navigate("/(tabs)/doctor_dashboard")
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
@@ -55,7 +55,7 @@ const LoginScreen: React.FC = () => {
           placeholder="Enter Password"
           editable={true}
         />
-        <PrimaryButton label="Login" onPress={() => alert("Login pressed")} />
+        <PrimaryButton label="Login" onPress={handleLogin} />
         <Text style={styles.questionText}> Don't have an account?</Text>
         <SecondaryLink text=" Sign Up" onPress={handleSignUp} />
       </ScrollView>
@@ -76,4 +76,3 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
