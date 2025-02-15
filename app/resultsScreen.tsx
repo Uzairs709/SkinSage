@@ -2,28 +2,41 @@ import React from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import AlertBox from "../components/AlertBox";
 import ResultItem from "../components/ResultItem";
-import { useNavigation } from "@react-navigation/native";
+import { useRouter } from "expo-router";
+import { useFonts } from "expo-font";
 
-export default function resultsScreen () {
+
+export default function ResultsScreen() {
+  
+  const router = useRouter();
+  
 
   return (
+    
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>Results</Text>
       <AlertBox />
 
-      <Text style={styles.subHeader}>Possible Results</Text>
+      <View style={styles.sectionHeader}>
+        <Text style={styles.subHeader}>Possible Results</Text>
+        <View style={styles.separator} />
+      </View>
 
-      <ResultItem color="#EF4444" label="Eczema" percentage={71} />
-      <ResultItem color="#FACC15" label="Acne" percentage={31} />
-      <ResultItem color="#374151" label="Melasma" percentage={13} />
+      <ResultItem color="#EF4444" label="Eczema" percentage={null} />
+      <View style={styles.itemSeparator} />
 
-      {/* <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Home")}>
+      <ResultItem color="#FACC15" label="Acne" percentage={null} />
+      <View style={styles.itemSeparator} />
+
+      <ResultItem color="#374151" label="Melasma" percentage={null} />
+      <View style={styles.itemSeparator} />
+
+      <TouchableOpacity style={styles.button} onPress={() => router.push("/")}>
         <Text style={styles.buttonText}>Back to Home</Text>
-      </TouchableOpacity> */}
-
+      </TouchableOpacity>
     </ScrollView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -36,18 +49,31 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 15,
   },
+  sectionHeader: {
+    marginTop: 15,
+    marginBottom: 10,
+  },
   subHeader: {
     fontSize: 16,
     fontWeight: "bold",
-    marginTop: 15,
-    marginBottom: 10,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: "black",
+    marginTop: 10,
+  },
+  itemSeparator: {
+    height: 1,
+    backgroundColor: "#000000",
+    marginVertical: 8,
   },
   button: {
     backgroundColor: "#14532D",
     padding: 12,
     borderRadius: 8,
     alignItems: "center",
-    marginTop: 20,
+    marginTop: 200,
+    width: "100%", // Adjust if AlertBox has a specific width
   },
   buttonText: {
     color: "#fff",

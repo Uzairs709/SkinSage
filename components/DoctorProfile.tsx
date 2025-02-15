@@ -17,7 +17,7 @@ const DoctorProfile: React.FC = () => (
 const styles = StyleSheet.create({
   doctorProfile: {
     flexDirection: "row", // Align items horizontally
-    alignItems: "center",
+    
     alignItems: "flex-start", // Align items to the left
     width: "100%", // Ensure full width
 
