@@ -5,7 +5,6 @@ import ResultItem from "../components/ResultItem";
 import { useNavigation } from "@react-navigation/native";
 
 export default function resultsScreen () {
-  const navigation = useNavigation();
 
   return (
     <ScrollView contentContainerStyle={styles.container}>

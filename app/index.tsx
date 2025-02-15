@@ -58,7 +58,7 @@
 
  export default function Index() {
    const isLoggedIn = true; // Replace with real auth logic
-   return <Redirect href={isLoggedIn ? "/reultApp" : "/(auth)/splash"} />;
+   return <Redirect href={isLoggedIn ? "/resultsScreen" : "/(auth)/splash"} />;
  }
 
 
