@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import React, { useState } from "react";
 import { View, Button, Image, StyleSheet } from "react-native";
 import { launchCamera } from "react-native-image-picker";
@@ -6,13 +7,14 @@ export default function samera_screen (){
   const [photo, setPhoto] = useState(null);
 
   const openCamera = async () => {
-    const result = await launchCamera({
+    {/*const result = await launchCamera({
       mediaType: "photo",
       cameraType: "back",
     });
     if (!result.didCancel && result.assets) {
       setPhoto(result.assets[0].uri);
-    }
+    }*/}
+    router.navigate("/resultApp")
   };
 
   return (
