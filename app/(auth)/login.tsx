@@ -33,7 +33,7 @@ export default function LoginScreen (){
   };
 
   const handleLogin = () =>{
-    router.navigate("/(tabs)/doctor_dashboard")
+    router.navigate("/userprofileScreen"); {/*/(tabs)/doctor_dashboard*/}
   };
 
   return (

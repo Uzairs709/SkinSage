@@ -11,6 +11,7 @@ export default function RootLayout() {
 
     {/* Main App Screens */}
     <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+    <Stack.Screen name="(userProfileScreen)" options={{ headerShown: false }} />
   </Stack>
   );
 }
