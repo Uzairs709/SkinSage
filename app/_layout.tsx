@@ -12,6 +12,7 @@ export default function RootLayout() {
     {/* Main App Screens */}
     <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
     <Stack.Screen name="/resultsScreen" options={{ headerShown: false }} /> {/*result app*/}
+    <Stack.Screen name="/userListScreen" options={{ headerShown: false }} />
   </Stack>
   );
 }

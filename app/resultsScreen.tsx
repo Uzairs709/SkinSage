@@ -29,7 +29,7 @@ export default function ResultsScreen() {
       <ResultItem color="#374151" label="Melasma" percentage={null} />
       
 
-      <TouchableOpacity style={styles.button} onPress={() => router.push("/")}>
+      <TouchableOpacity style={styles.button} onPress={() => router.push("/userListScreen")}>
         <Text style={styles.buttonText}>Back to Home</Text>
       </TouchableOpacity>
     </ScrollView>
