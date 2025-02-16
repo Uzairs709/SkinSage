@@ -23,13 +23,11 @@ export default function ResultsScreen() {
       </View>
 
       <ResultItem color="#EF4444" label="Eczema" percentage={null} />
-      <View style={styles.itemSeparator} />
-
+      
       <ResultItem color="#FACC15" label="Acne" percentage={null} />
-      <View style={styles.itemSeparator} />
-
+      
       <ResultItem color="#374151" label="Melasma" percentage={null} />
-      <View style={styles.itemSeparator} />
+      
 
       <TouchableOpacity style={styles.button} onPress={() => router.push("/")}>
         <Text style={styles.buttonText}>Back to Home</Text>
@@ -72,7 +70,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 8,
     alignItems: "center",
-    marginTop: 200,
+    marginTop: 20,
     width: "100%", // Adjust if AlertBox has a specific width
   },
   buttonText: {

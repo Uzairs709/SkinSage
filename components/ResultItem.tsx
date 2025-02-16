@@ -8,10 +8,14 @@ interface ResultItemProps {
 }
 
 const ResultItem: React.FC<ResultItemProps> = ({ color, label, percentage }) => {
-  const validPercentage = percentage !== null ? percentage : 80; // Default to 50% if null
+  const validPercentage = percentage !== null ? percentage : 50; // Default to 50% if null
 
   return (
-    <View style={styles.container}>
+    <View style={styles.card}>
+      {/* Title */}
+      <Text style={styles.label}>{label}</Text>
+
+      {/* Progress Bar */}
       <View style={styles.progressBarContainer}>
         <View
           style={[
@@ -26,35 +30,51 @@ const ResultItem: React.FC<ResultItemProps> = ({ color, label, percentage }) => 
           ]}
         />
       </View>
-      <Text style={styles.text}>{label} {percentage !== null ? `${percentage}%` : "N/A"}</Text>
+
+      {/* Percentage */}
+      <Text style={styles.percentageText}>{percentage !== null ? `${percentage}%` : "N/A"}</Text>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 5,
+  card: {
+    backgroundColor: "white",
+    padding: 15,
+    borderRadius: 10,
+    marginVertical: 10,
+    borderWidth: 1,
+    borderColor: "black",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3, // Adds shadow for Android
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 8,
   },
   progressBarContainer: {
     flexDirection: "row",
     height: 8,
     borderRadius: 5,
     overflow: "hidden",
-    flex: 1,
+    backgroundColor: "#D1D5DB", // Grey background for unfilled bar
   },
   progressBarFill: {
     height: "100%",
   },
   progressBarEmpty: {
     height: "100%",
-    backgroundColor: "#D1D5DB", // Grey for empty portion
+    backgroundColor: "#D1D5DB",
   },
-  text: {
+  percentageText: {
+    marginTop: 8,
     fontSize: 14,
     fontWeight: "500",
-    marginLeft: 10,
+    textAlign: "right",
   },
 });
 
