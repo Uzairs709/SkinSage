@@ -14,7 +14,8 @@
       "adaptiveIcon": {
         "backgroundColor": "#ffffff"
       },
-      "package": "com.uzairu809.SkinSage"
+      "package": "com.uzairu809.SkinSage",
+      "permissions": ["INTERNET"]
     },
     "web": {
       "bundler": "metro",

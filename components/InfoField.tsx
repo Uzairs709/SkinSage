@@ -9,6 +9,7 @@ interface InfoFieldProps {
   labelWidth?: number; // Optional label width
   isPassword?: boolean; // Whether the input is for a password
   placeholder?: string; // Placeholder text
+  setValue?: (value: string) => void;
 }
 
 const InfoField: React.FC<InfoFieldProps> = ({
@@ -17,9 +18,9 @@ const InfoField: React.FC<InfoFieldProps> = ({
   editable = false,
   labelWidth = 80,
   isPassword = false,
-  placeholder = ""
+  placeholder = "",
+  setValue,
 }) => {
-  const [inputValue, setInputValue] = useState(value); // State to manage the input value
 
   let [fontsLoaded] = useFonts({
     'Epilogue': require('../assets/fonts/Epilogue-VariableFont_wght.ttf'), // Load your custom font
@@ -34,9 +35,9 @@ const InfoField: React.FC<InfoFieldProps> = ({
       <Text style={[styles.label, { width: labelWidth }]}>{label}</Text>
       <TextInput
         style={styles.input}
-        value={inputValue}
+        value={value}
         editable={editable}
-        onChangeText={setInputValue} // Update the state when the text changes
+        onChangeText={setValue} // Update the state when the text changes
         placeholderTextColor="#6B7280" // Gray
         secureTextEntry={isPassword}
         placeholder={placeholder}
