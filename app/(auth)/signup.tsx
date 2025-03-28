@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, SafeAreaView, ScrollView } from "react-native";
+import { Alert, Text, StyleSheet, SafeAreaView, ScrollView } from "react-native";
 import PrimaryButton from "@/components/PrimaryButton";
 import SecondaryLink from "@/components/SecondaryLink";
 import LoginSignupHeader from "@/components/LoginSignupHeader";
@@ -7,8 +7,9 @@ import { router } from "expo-router";
 import RoleSwitch from "@/components/RoleSwitch";
 import DoctorSignup from "@/components/DoctorSignup";
 import PatientSignup from "@/components/PatientSignup";
+import api from "@/utils/api"; // Adjust the path to your axios instance file
 
-export default function signup() {
+export default function Signup() {
   const [selectedRole, setSelectedRole] = useState("Doctor");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -17,8 +18,48 @@ export default function signup() {
   const [gender, setGender] = useState("Male");
   const [age, setAge] = useState("");
 
-  const handleSignup = () => {
-    router.push("/(tabs)/doctor_dashboard");
+  const handleSignup = async () => {
+    let payload = {};
+
+    if (selectedRole === "Doctor") {
+      payload = {
+        name,
+        email,
+        password,
+        user_type: "doctor",
+        license_number: licenseNumber,
+      };
+    } else {
+      payload = {
+        name,
+        email,
+        password,
+        user_type: "patient",
+        age: age ? parseInt(age) : undefined,
+        gender,
+      };
+    }
+
+    try {
+      const response = await api.post("/signup", payload);
+      console.log("Signup successful", response.data);
+      // Redirect based on role
+      if (selectedRole === "Doctor") {
+        router.push("/(tabs)/doctor_dashboard");
+      } else if (selectedRole==="Patient"){
+        //TODO: update this
+        // router.push("/(tabs)/patient_dashboard");
+        router.push("/(tabs)/doctor_dashboard");
+      }else{
+        Alert.alert("some error occured")
+      }
+    } catch (error:any) {
+      console.error(
+        "Signup failed",
+        error.response ? error.response.data : error.message
+      );
+      Alert.alert("Signup Failed", "Please try again.");
+    }
   };
 
   const handleLogin = () => {
