@@ -33,21 +33,21 @@ const PatientSignup: React.FC<PatientSignupProps> = ({
       <InfoField
         label="Name"
         value={name}
-        onChangeText={setName}
+        setValue={setName}
         placeholder="Enter Name"
         editable
       />
       <InfoField
         label="Email"
         value={email}
-        onChangeText={setEmail}
+        setValue={setEmail}
         placeholder="Enter Email"
         editable
       />
       <InfoField
         label="Password"
         value={password}
-        onChangeText={setPassword}
+        setValue={setPassword}
         isPassword
         placeholder="Enter Password"
         editable
@@ -74,7 +74,7 @@ const PatientSignup: React.FC<PatientSignupProps> = ({
           <InfoField
             label="Age"
             value={age}
-            onChangeText={setAge}
+            setValue={setAge}
             placeholder="Enter Age"
             editable
           />
