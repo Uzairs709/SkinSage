@@ -17,7 +17,10 @@
       },
       "package": "com.uzairu809.SkinSage",
       "permissions": [
-        "INTERNET"
+        "INTERNET",
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
       ]
     },
     "web": {
@@ -50,3 +53,5 @@
     }
   }
 }
+
+//TODO: Add IOS permissions too
