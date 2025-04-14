@@ -2,7 +2,7 @@ import React from "react";
 import { View, ScrollView, StyleSheet, SafeAreaView } from "react-native";
 import DoctorProfile from "@/components/DoctorProfile";
 import UpcomingAppointments from "@/components/UpcomingAppointments";
-import BottomNavigationBar from "@/app/(tabs)/_layout";
+import BottomNavigationBar from "@/app/(protected)/Doctor/(tabs)/_layout";
 
 export default function doctor_dashboard(){
   return (

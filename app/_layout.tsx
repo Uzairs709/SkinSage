@@ -1,16 +1,11 @@
-import { Header } from "@react-navigation/stack";
-import { Stack } from "expo-router";
+// app/_layout.tsx
+import { Slot } from "expo-router";
+import { AuthProvider } from "@/context/AuthContext";
 
 export default function RootLayout() {
-  return  (
-    <Stack screenOptions={{headerShown: false}}>
-    {/* Authentication Screens */}
-    <Stack.Screen name="(auth)/splash" options={{ headerShown: false }} />
-    <Stack.Screen name="(auth)/login" options={{ headerShown:false }} />
-    <Stack.Screen name="(auth)/signup" options={{ headerShown:false }} />
-
-    {/* Main App Screens */}
-    <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-  </Stack>
+  return (
+    <AuthProvider>
+      <Slot />
+    </AuthProvider>
   );
 }

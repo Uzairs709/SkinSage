@@ -14,7 +14,7 @@ export default function splash () {
 
   const handleGetStarted = async() => {
     try{
-    router.navigate("/login");
+    router.replace("/login");
     }catch(e){
       console.log("error while login")
     }
