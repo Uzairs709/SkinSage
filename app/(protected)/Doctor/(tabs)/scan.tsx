@@ -4,26 +4,25 @@ import ScanCard from "@/components/ScanCard";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import * as ImagePicker from "expo-image-picker";
 import { predictImage } from "@/utils/api";
+import { useRouter } from "expo-router";
 
 const ScanTitle = () => (
   <>
     <Text style={styles.title}>Scan</Text>
-    <Text style={styles.subtitle}>
-      Please choose one of the following options
-    </Text>
+   
   </>
 );
 
 export default function Scan() {
   const { showActionSheetWithOptions } = useActionSheet();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [predictions, setPredictions] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   const handleProceed = async () => {
     const options = ["Open Camera", "Choose from Gallery", "Cancel"];
     const cancelButtonIndex = 2;
-    console.log("camera or galary triggered");
+
     showActionSheetWithOptions(
       { options, cancelButtonIndex },
       async (buttonIndex) => {
@@ -49,7 +48,6 @@ export default function Scan() {
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             quality: 1,
           });
-          console.log("Result: ",result);
         } else {
           return;
         }
@@ -58,11 +56,14 @@ export default function Scan() {
           const uri = result.assets[0].uri;
           setLoading(true);
           setError(null);
-          console.log("uri: ",uri);
           try {
             const json = await predictImage(uri);
-            console.log("Prediction result:", json);
-            setPredictions(json.predictions || []);
+            router.push({
+              pathname: "/(protected)/Doctor/ResultsScreen",
+              params: {
+                predictions: JSON.stringify(json.predictions || []),
+              },
+            });
           } catch (e: any) {
             console.error("Prediction failed", e);
             setError(e.message || "Unknown error");
@@ -80,11 +81,6 @@ export default function Scan() {
       <ScanCard onPress={handleProceed} />
       {loading && <ActivityIndicator size="large" style={styles.loader} />}
       {error && <Text style={styles.error}>{error}</Text>}
-      {predictions.map((p, i) => (
-        <View key={i} style={styles.predictionRow}>
-          <Text>{`#${p.rank} ${p.class}: ${p.chance_percentage}%`}</Text>
-        </View>
-      ))}
     </View>
   );
 }
@@ -111,8 +107,5 @@ const styles = StyleSheet.create({
   error: {
     marginTop: 20,
     color: "red",
-  },
-  predictionRow: {
-    marginTop: 10,
   },
 });
