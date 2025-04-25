@@ -43,21 +43,20 @@ export default function LoginScreen() {
       // For demonstration, we assume the context is updated synchronously.
       // You could also use an effect to listen to auth state changes.
       // For now, we’ll use a simple conditional:
-      console.log("after login")
       const userString = await AsyncStorage.getItem("user");
       if (userString) {
         const user = JSON.parse(userString);
         if (user.user_type === "doctor") {
-  router.replace("/Doctor/doctor_dashboard");
+          router.replace("/(protected)/Doctor/(tabs)/doctor_dashboard");
         } else {
           // router.navigate("(protected)/Doctor//(tabs)/patient_dashboard");
           console.log("Patient here");
-          
+
         }
       }
     } catch (error: any) {
       if (!error.response) {
-        Alert.alert("Error", "No internet connection"+error);
+        Alert.alert("Error", "No internet connection" + error);
       } else if (error.response.status === 401) {
         Alert.alert("Error", "Invalid credentials");
       } else {

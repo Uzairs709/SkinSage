@@ -8,7 +8,7 @@ const DoctorProfile: React.FC = () => (
       style={styles.doctorProfileImg}
     />
     <View>
-      <Text style={styles.doctorName}>Dr. Ashraf Mahmood</Text>
+      <Text style={styles.doctorName}>Dr. Ashraf Arslan</Text>
       <Text style={styles.doctorRole}>Medical Profile</Text>
     </View>
   </View>
@@ -18,7 +18,6 @@ const styles = StyleSheet.create({
   doctorProfile: {
     flexDirection: "row", // Align items horizontally
     alignItems: "center",
-    alignItems: "flex-start", // Align items to the left
     width: "100%", // Ensure full width
 
     padding: 16,
