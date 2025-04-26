@@ -15,8 +15,7 @@ const ScanCard: React.FC<ScanCardProps> = ({ onPress }) => {
       />
       <Text style={styles.heading}>Analysis</Text>
       <Text style={styles.description}>
-        Please choose one of the following options. Please choose one of the
-        following options.
+        Please choose the following options.
       </Text>
 
       <TouchableOpacity

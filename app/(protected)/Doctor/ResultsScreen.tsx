@@ -9,6 +9,7 @@ import {
 import AlertBox from "@/components/AlertBox";
 import ResultItem from "@/components/ResultItem";
 import { useRouter, useLocalSearchParams } from "expo-router";
+import PrimaryButton from "@/components/PrimaryButton";
 
 export default function ResultsScreen() {
   const router = useRouter();
@@ -38,9 +39,12 @@ export default function ResultsScreen() {
         ))
       )}
 
-      <TouchableOpacity style={styles.button} onPress={() => router.back()}>
-        <Text style={styles.buttonText}>Back to Home</Text>
-      </TouchableOpacity>
+      <PrimaryButton 
+      label="Go Backk"
+      onPress={()=>router.back()}
+      width="90%"
+      />
+        
     </ScrollView>
   );
 }
@@ -73,17 +77,5 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: "black",
     marginTop: 10,
-  },
-  button: {
-    backgroundColor: "#14532D",
-    padding: 12,
-    borderRadius: 8,
-    alignItems: "center",
-    marginTop: 20,
-    width: "100%",
-  },
-  buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
   },
 });
