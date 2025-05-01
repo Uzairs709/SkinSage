@@ -41,12 +41,7 @@ export async function predictImage(uri: string): Promise<any> {
     type: "image/jpeg",
   } as any);
 
-  // // Use axios to POST multipart/form-data
-  // const response = await api.post("/predict", formData, {
-  //   headers: { "Content-Type": "multipart/form-data" },
-  // });
-
-  // return response.data;
+  
   const response = await fetch(`${EXPO_PUBLIC_API_URL}/predict`, {
     method: "POST",
     headers: {

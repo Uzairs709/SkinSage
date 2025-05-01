@@ -1,18 +1,89 @@
 import React from "react";
-import { View, ScrollView, StyleSheet, SafeAreaView } from "react-native";
+import { ScrollView, StyleSheet, SafeAreaView,Text  } from "react-native";
 import DoctorProfile from "@/components/DoctorProfile";
 import UpcomingAppointments from "@/components/UpcomingAppointments";
 import BottomNavigationBar from "@/app/(protected)/Doctor/(tabs)/_layout";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import api from "@/utils/api";
+import { useState,useEffect } from "react";
 
-export default function doctor_dashboard(){
+interface FollowUp {
+  patientName: string;
+  patientDescription: string;
+  appointmentDay: string;
+  appointmentDate: string;
+  appointmentTime: string;
+}
+
+const LoadingSpinner = () => (
+  <React.Fragment>
+    {/* Replace with ActivityIndicator or custom spinner if needed */}
+    <Text style={{ margin: 10, fontSize: 16 }}>Loading appointments...</Text>
+  </React.Fragment>
+);
+
+const ErrorMessage = ({ message }: { message: string }) => (
+  <Text style={{ color: "red", margin: 10 }}>Error: {message}</Text>
+);
+
+const NoAppointmentsMessage = () => (
+  <Text style={{ margin: 10, fontSize: 16 }}>No follow-up appointments for today.</Text>
+);
+
+
+export default function doctor_dashboard() {
+  const [appointments, setAppointments] = useState<FollowUp[]|null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string|undefined>(undefined);
+  const [doctorName, setDoctorName] = useState<string>("Doctor");
+
+
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      try {
+        setLoading(true);
+        const userString = await AsyncStorage.getItem("user");
+        console.log("USER: " + userString);
+        if (!userString) throw new Error("No user in storage");
+        const user = JSON.parse(userString);
+        const doctorId = user.id;
+        setDoctorName(user.name || "Doctor"); // Set doctor name for profile
+
+  
+        const res = await api.get(`/doctors/${doctorId}/followups`);
+        console.log("Appointments:", res.data);
+  
+        const data: FollowUp[] = res.data;
+        setAppointments(data);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchAppointments();
+  }, []);
+  
+
   return (
-  <SafeAreaView style={styles.safeArea}>
-    <ScrollView contentContainerStyle={styles.dashboardContainer}>
-      <DoctorProfile />
-      <UpcomingAppointments />
-      <BottomNavigationBar />
-    </ScrollView>
-  </SafeAreaView>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView contentContainerStyle={styles.dashboardContainer}>
+      <DoctorProfile name={`${doctorName}`} />
+      {appointments &&
+          appointments.map((apt, i) => (
+            <UpcomingAppointments
+              key={i}
+              patientName={apt.patientName}
+              patientDescription={apt.patientDescription}
+              appointmentDay={apt.appointmentDay}
+              appointmentDate={apt.appointmentDate}
+              appointmentTime={apt.appointmentTime}
+            />
+          ))}
+        <BottomNavigationBar />
+      </ScrollView>
+    </SafeAreaView>
   )
 };
 
