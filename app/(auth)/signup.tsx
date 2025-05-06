@@ -46,10 +46,10 @@ export default function Signup() {
       
       // Redirect based on role
       if (selectedRole === "Doctor") {
-        // router.push("/(tabs)/doctor_dashboard");
+         router.push("/(doctor)/(tabs)/doctor_dashboard");
       } else if (selectedRole==="Patient"){
         //TODO: update this
-        // router.push("/(tabs)/home");
+         router.push("/(patient)/(tabs)/home");
       }else{
         Alert.alert("some error occured")
       }
