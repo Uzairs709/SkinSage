@@ -1,8 +1,8 @@
 import InfoField from "@/components/InfoField";
+import PasswordField from "@/components/PasswordField";
 import { Picker } from "@react-native-picker/picker";
 import React, { useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import Icon from "react-native-vector-icons/Feather"; // Using Feather icons for eye icons
+import { StyleSheet, Text, View } from "react-native";
 
 interface PatientSignupProps {
   name: string;
@@ -30,21 +30,11 @@ const PatientSignup: React.FC<PatientSignupProps> = ({
   setAge,
 }) => {
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [passwordMatchError, setPasswordMatchError] = useState(false);
-
-  const togglePasswordVisibility = () => setPasswordVisible(!passwordVisible);
-  const toggleConfirmPasswordVisibility = () =>
-    setConfirmPasswordVisible(!confirmPasswordVisible);
 
   const handleConfirmPasswordChange = (text: string) => {
     setConfirmPassword(text);
-    if (text !== password) {
-      setPasswordMatchError(true);
-    } else {
-      setPasswordMatchError(false);
-    }
+    setPasswordMatchError(text !== password);
   };
 
   return (
@@ -64,56 +54,21 @@ const PatientSignup: React.FC<PatientSignupProps> = ({
         editable
       />
 
-      {/* Password Field */}
-      <View style={styles.inputContainer}>
-        <InfoField
-          label="Password"
-          value={password}
-          setValue={setPassword}
-          isPassword={true}
-          placeholder="Enter Password"
-          editable
-        />
-        <TouchableOpacity
-          onPress={togglePasswordVisibility}
-          style={styles.eyeIcon}
-        >
-          <Icon
-            name={passwordVisible ? "eye-off" : "eye"}
-            size={24}
-            color="#888"
-            marginTop="20"
-            marginRight="17"
-          />
-        </TouchableOpacity>
-      </View>
+      <PasswordField
+        label="Password"
+        value={password}
+        setValue={setPassword}
+        placeholder="Enter Password"
+      />
 
-      {/* Confirm Password Field */}
-      <View style={styles.inputContainer}>
-        <InfoField
-          label="Confirm Password"
-          value={confirmPassword}
-          labelWidth={86}
-          setValue={handleConfirmPasswordChange}
-          isPassword={true}
-          placeholder="Confirm Password"
-          editable
-        />
-        <TouchableOpacity
-          onPress={toggleConfirmPasswordVisibility}
-          style={styles.eyeIcon}
-        >
-          <Icon
-            name={confirmPasswordVisible ? "eye-off" : "eye"}
-            size={24}
-            color="#888"
-            marginTop="35"
-            marginRight="17"
-          />
-        </TouchableOpacity>
-      </View>
+      <PasswordField
+        label="Confirm Password"
+        value={confirmPassword}
+        setValue={handleConfirmPasswordChange}
+        placeholder="Confirm Password"
+        labelWidth={150}
+      />
 
-      {/* Error message for password mismatch */}
       {passwordMatchError && (
         <Text style={styles.errorText}>Passwords do not match!</Text>
       )}
@@ -161,7 +116,6 @@ const styles = StyleSheet.create({
   inputContainer: {
     flex: 1,
     marginHorizontal: 5,
-    // position: "relative",
   },
   label: {
     fontSize: 14,
@@ -186,11 +140,6 @@ const styles = StyleSheet.create({
     height: 50,
     fontSize: 16,
     color: "#000",
-  },
-  eyeIcon: {
-    position: "absolute",
-    right: 10,
-    top: 10,
   },
   errorText: {
     color: "red",

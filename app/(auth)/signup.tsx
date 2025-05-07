@@ -23,6 +23,8 @@ export default function Signup() {
   const [licenseNumber, setLicenseNumber] = useState("");
   const [gender, setGender] = useState("Male");
   const [age, setAge] = useState("");
+  const [designation, setDesignation] = useState("");
+  const [specialization, setSpecialization] = useState("");
 
   const handleSignup = async () => {
     let payload = {};
@@ -34,6 +36,8 @@ export default function Signup() {
         password,
         user_type: "doctor",
         license_number: licenseNumber,
+        designation,
+        specialization,
       };
     } else {
       payload = {
@@ -92,6 +96,10 @@ export default function Signup() {
             setPassword={setPassword}
             licenseNumber={licenseNumber}
             setLicenseNumber={setLicenseNumber}
+            designation={designation}
+            setDesignation={setDesignation}
+            specialization={specialization}
+            setSpecialization={setSpecialization}
           />
         ) : (
           <PatientSignup

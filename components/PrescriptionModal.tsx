@@ -9,12 +9,19 @@ import {
   View,
 } from "react-native";
 
+interface Prescription {
+  medication: string;
+  quantity: number | string;
+}
+
 export default function PrescriptionModal({
   visible,
   onClose,
+  prescriptions,
 }: {
   visible: boolean;
   onClose: () => void;
+  prescriptions: Prescription[];
 }) {
   return (
     <Modal visible={visible} transparent animationType="slide">
@@ -27,31 +34,12 @@ export default function PrescriptionModal({
               <Text style={styles.headerText}>Title</Text>
               <Text style={styles.headerText}>Qty</Text>
             </View>
-            <View style={styles.tableRow}>
-              <Text>• Hydrocortisone 1% Cream</Text>
-              <Text>1</Text>
-            </View>
-            <View style={styles.tableRow}>
-              <Text>• CeraVe Moisturizing Cream</Text>
-              <Text>1</Text>
-            </View>
-            <View style={styles.tableRow}>
-              <Text>• Benzoyl Peroxide 2.5% Gel</Text>
-              <Text>1</Text>
-            </View>
-            <View style={styles.tableRow}>
-              <Text>• Clindamycin 1% Gel</Text>
-              <Text>1</Text>
-            </View>
-            <View style={styles.tableRow}>
-              <Text>• Hydroquinone 4% Cream</Text>
-              <Text>1</Text>
-            </View>
-            <View style={styles.tableRow}>
-              <Text>• Broad Spectrum Sunscreen (SPF 50+)</Text>
-              <Text>1</Text>
-            </View>
-
+            {prescriptions.map((item, idx) => (
+              <View style={styles.tableRow} key={idx}>
+                <Text>{`• ${item.medication}`}</Text>
+                <Text>{item.quantity}</Text>
+              </View>
+            ))}
             <Text style={styles.noteTitle}>Note</Text>
             <Text style={styles.noteText}>
               Cleanse your skin with a gentle cleanser. For eczema, apply

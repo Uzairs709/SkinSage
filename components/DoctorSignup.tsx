@@ -1,7 +1,7 @@
 import InfoField from "@/components/InfoField";
+import PasswordField from "@/components/PasswordField";
 import React, { useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import Icon from "react-native-vector-icons/Feather"; // Eye icon
+import { StyleSheet, Text, View } from "react-native";
 
 interface DoctorSignupProps {
   name: string;
@@ -33,8 +33,6 @@ const DoctorSignup: React.FC<DoctorSignupProps> = ({
   setSpecialization,
 }) => {
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [passwordMatchError, setPasswordMatchError] = useState(false);
 
   const handleConfirmPasswordChange = (text: string) => {
@@ -59,55 +57,21 @@ const DoctorSignup: React.FC<DoctorSignupProps> = ({
         editable
       />
 
-      {/* Password Field */}
-      <View style={styles.inputContainer}>
-        <InfoField
-          label="Password"
-          value={password}
-          setValue={setPassword}
-          isPassword
-          placeholder="Enter Password"
-          editable
-        />
-        <TouchableOpacity
-          onPress={() => setPasswordVisible(!passwordVisible)}
-          style={styles.eyeIcon}
-        >
-          <Icon
-            name={passwordVisible ? "eye-off" : "eye"}
-            size={24}
-            color="#888"
-            marginTop="-9"
-            marginRight="13"
-          />
-        </TouchableOpacity>
-      </View>
+      <PasswordField
+        label="Password"
+        value={password}
+        setValue={setPassword}
+        placeholder="Enter Password"
+      />
 
-      {/* Confirm Password Field */}
-      <View style={styles.inputContainer}>
-        <InfoField
-          label="Confirm Password"
-          value={confirmPassword}
-          setValue={handleConfirmPasswordChange}
-          isPassword
-          placeholder="Confirm Password"
-          editable
-        />
-        <TouchableOpacity
-          onPress={() => setConfirmPasswordVisible(!confirmPasswordVisible)}
-          style={styles.eyeIcon}
-        >
-          <Icon
-            name={confirmPasswordVisible ? "eye-off" : "eye"}
-            size={24}
-            color="#888"
-            marginTop="6"
-            marginRight="13"
-          />
-        </TouchableOpacity>
-      </View>
+      <PasswordField
+        label="Confirm Password"
+        value={confirmPassword}
+        setValue={handleConfirmPasswordChange}
+        placeholder="Confirm Password"
+        labelWidth={150}
+      />
 
-      {/* Error Message */}
       {passwordMatchError && (
         <Text style={styles.errorText}>Passwords do not match!</Text>
       )}
@@ -140,16 +104,6 @@ const DoctorSignup: React.FC<DoctorSignupProps> = ({
 };
 
 const styles = StyleSheet.create({
-  inputContainer: {
-    position: "relative",
-    marginBottom: 10,
-  },
-  eyeIcon: {
-    position: "absolute",
-    right: 15,
-    top: 38, // Adjust this based on your InfoField height
-    zIndex: 1,
-  },
   errorText: {
     color: "red",
     fontSize: 14,

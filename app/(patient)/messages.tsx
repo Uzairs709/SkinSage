@@ -32,11 +32,15 @@ export default function Messages() {
   const [modalVisible, setModalVisible] = useState(false);
 
   // Simulated user type; change to "patient" to test patient view
-  const userType: "doctor" | "patient" = "doctor";
+  const userType = "doctor" as "doctor" | "patient";
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [text, setText] = useState("");
   const [pickedImage, setPickedImage] = useState<string | null>(null);
+  const [prescriptions] = useState([
+    { medication: "Hydrocortisone cream", quantity: "1 tube" },
+    { medication: "Antihistamine", quantity: "30 tablets" }
+  ]);
 
   const handleSend = () => {
     if (!text && !pickedImage) return;
@@ -163,6 +167,7 @@ export default function Messages() {
       <PrescriptionModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
+        prescriptions={prescriptions}
       />
     </View>
   );

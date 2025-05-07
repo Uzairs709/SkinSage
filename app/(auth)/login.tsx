@@ -1,5 +1,6 @@
 import InfoField from "@/components/InfoField";
 import LoginSignupHeader from "@/components/LoginSignupHeader";
+import PasswordField from "@/components/PasswordField";
 import PrimaryButton from "@/components/PrimaryButton";
 import SecondaryLink from "@/components/SecondaryLink";
 import { Colors } from "@/constants/Colors";
@@ -91,11 +92,10 @@ export default function LoginScreen() {
           editable={true}
           setValue={setEmail}
         />
-        <InfoField
+        <PasswordField
           label="Password"
           value={password}
           labelWidth={80}
-          isPassword={true}
           placeholder="Enter Password"
           editable={true}
           setValue={setPassword}
