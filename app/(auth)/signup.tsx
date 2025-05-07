@@ -7,7 +7,13 @@ import SecondaryLink from "@/components/SecondaryLink";
 import api from "@/utils/api"; // Adjust the path to your axios instance file
 import { router } from "expo-router";
 import React, { useState } from "react";
-import { Alert, SafeAreaView, ScrollView, StyleSheet, Text } from "react-native";
+import {
+  Alert,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+} from "react-native";
 
 export default function Signup() {
   const [selectedRole, setSelectedRole] = useState("Doctor");
@@ -43,17 +49,17 @@ export default function Signup() {
     try {
       const response = await api.post("/signup", payload);
       console.log("Signup successful", response.data);
-      
+
       // Redirect based on role
       if (selectedRole === "Doctor") {
         // router.push("/(tabs)/doctor_dashboard");
-      } else if (selectedRole==="Patient"){
+      } else if (selectedRole === "Patient") {
         //TODO: update this
         // router.push("/(tabs)/home");
-      }else{
-        Alert.alert("some error occured")
+      } else {
+        Alert.alert("some error occured");
       }
-    } catch (error:any) {
+    } catch (error: any) {
       console.error(
         "Signup failed",
         error.response ? error.response.data : error.message
@@ -63,7 +69,7 @@ export default function Signup() {
   };
 
   const handleLogin = () => {
-    router.push("/login");
+    router.replace("/login");
   };
 
   return (

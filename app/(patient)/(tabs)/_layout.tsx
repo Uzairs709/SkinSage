@@ -25,7 +25,7 @@ export default function TabLayout() {
         }}
       />
 
-      {/* Camera (Scan) Tab */}
+      {/* chats Tab */}
       <Tabs.Screen
         name="chats"
         options={{
@@ -48,8 +48,7 @@ export default function TabLayout() {
   );
 }
 
-
-const styles=StyleSheet.create({
+const styles = StyleSheet.create({
   bottomNav: {
     position: "absolute",
     bottom: 0,
@@ -66,4 +65,4 @@ const styles=StyleSheet.create({
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: -2 },
   },
-})
+});
