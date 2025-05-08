@@ -6,8 +6,9 @@ import PrimaryButton from "@/components/PrimaryButton";
 import RoleSwitch from "@/components/RoleSwitch";
 import SecondaryLink from "@/components/SecondaryLink";
 import api from "@/utils/api"; // Adjust the path to your axios instance file
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Alert, SafeAreaView, ScrollView, StyleSheet, Text } from "react-native";
 
 
@@ -19,44 +20,63 @@ export default function Signup() {
   const [licenseNumber, setLicenseNumber] = useState("");
   const [gender, setGender] = useState("Male");
   const [age, setAge] = useState("");
-  const [paymentConfirmed, setPaymentConfirmed] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const checkoutFormRef = useRef<{ handlePayment: () => Promise<boolean> }>(null);
 
 
  
   const handleSignup = async () => {
-    let payload = {};
-
-    if (selectedRole === "Doctor") {
-      payload = {
-        name,
-        email,
-        password,
-        user_type: "doctor",
-        license_number: licenseNumber,
-      };
-    } else {
-      payload = {
-        name,
-        email,
-        password,
-        user_type: "patient",
-        age: age ? parseInt(age) : undefined,
-        gender,
-      };
+    if (!name || !email || !password) {
+      Alert.alert("Error", "Please fill in all required fields");
+      return;
     }
 
+    setIsLoading(true);
     try {
+      // First handle payment
+      const paymentSuccess = await checkoutFormRef.current?.handlePayment();
+      
+      if (!paymentSuccess) {
+        Alert.alert(
+          "Payment Required", 
+          "Please complete the payment to continue with registration. You can try again by clicking the Sign Up button.",
+          [{ text: "OK" }]
+        );
+        setIsLoading(false);
+        return;
+      }
+
+      // If payment successful, proceed with signup
+      let payload = {};
+      if (selectedRole === "Doctor") {
+        payload = {
+          name,
+          email,
+          password,
+          user_type: "doctor",
+          license_number: licenseNumber,
+        };
+      } else {
+        payload = {
+          name,
+          email,
+          password,
+          user_type: "patient",
+          age: age ? parseInt(age) : undefined,
+          gender,
+        };
+      }
+
       const response = await api.post("/signup", payload);
       console.log("Signup successful", response.data);
 
+      await AsyncStorage.removeItem("user");
+      await AsyncStorage.setItem("user", JSON.stringify(response.data));
       // Redirect based on role
       if (selectedRole === "Doctor") {
-        // router.push("/(tabs)/doctor_dashboard");
+        router.push("/(doctor)/(tabs)/doctor_dashboard");
       } else if (selectedRole === "Patient") {
-        //TODO: update this
-        // router.push("/(tabs)/home");
-      } else {
-        Alert.alert("some error occured")
+        router.push("/home");
       }
     } catch (error: any) {
       console.error(
@@ -64,6 +84,8 @@ export default function Signup() {
         error.response ? error.response.data : error.message
       );
       Alert.alert("Signup Failed", "Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -107,12 +129,12 @@ export default function Signup() {
           />
         )}
 
-        <CheckoutForm amount={300} />
+        <CheckoutForm ref={checkoutFormRef} amount={300} />
 
         <PrimaryButton
-          label="Sign Up"
+          label={isLoading ? "Processing..." : "Sign Up"}
           onPress={handleSignup}
-          
+          disabled={isLoading}
         />
         <Text style={styles.questionText}>Already have an account?</Text>
         <SecondaryLink text="Login" onPress={handleLogin} />
