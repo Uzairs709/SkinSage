@@ -1,5 +1,5 @@
 // context/AuthContext.tsx
-import api, { setAuthToken } from "@/utils/api";
+import axios from "@/utils/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { createContext, ReactNode, useEffect, useState } from "react";
 
@@ -39,81 +39,42 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   // Fetch /users/me and persist
-  const fetchCurrentUser = async (bearerToken: string) => {
+  const fetchCurrentUser = async (JwtToken: string) => {
     try {
-      console.log("Fetching current user with token:", bearerToken.substring(0, 10) + "...");
-      setAuthToken(bearerToken);
-      
-      const resp = await api.get<User>("/users/me");
-      console.log("User data received:", JSON.stringify(resp.data, null, 2));
-      
-      if (!resp.data || !resp.data.user_type) {
-        throw new Error("Invalid user data received from server");
-      }
-
+      const resp = await axios.get<User>("/users/me", {
+        headers: { "X-User-Token": JwtToken, },
+      });
       setUser(resp.data);
       await AsyncStorage.setItem("user", JSON.stringify(resp.data));
-    } catch (err: any) {
+    } catch (err) {
       console.error("Failed to fetch current user:", err);
-      if (err.response?.status === 404) {
-        console.log("Clearing stale user data due to 404 error");
-        await AsyncStorage.removeItem("user");
-        await AsyncStorage.removeItem("access_token");
-        setUser(null);
-        setToken(null);
-        throw new Error("User profile not found. Please try logging in again.");
-      }
-      throw err;
+      // Optionally: if 401, force logout()
     }
   };
 
   const login = async (email: string, password: string) => {
+    console.log("Starting login process for email inside login function:", email);
     setLoading(true);
+    await AsyncStorage.removeItem("user");
+    await AsyncStorage.removeItem("access_token");
+    setUser(null);
+    setToken(null);
     try {
-      if (!email || !password) {
-        throw new Error("Email and password are required");
-      }
+      // 1) get JWT
+      const { data: tokenResp } = await axios.post<{
+        access_token: string;
+        token_type: string;
+      }>("/token", { email, password });
+      console.log("Token response:", tokenResp);
+      // 2) persist token
+      setToken(tokenResp.access_token);
+      await AsyncStorage.setItem("access_token", tokenResp.access_token);
 
-      // Clear any existing data before login
-      await AsyncStorage.removeItem("user");
-      await AsyncStorage.removeItem("access_token");
-      setUser(null);
-      setToken(null);
-
-      console.log("Attempting login with email:", email);
-      
-      // For Hugging Face Spaces, we'll use a mock token for now
-      // In a real app, you would validate credentials with your backend
-      const mockToken = "mock_token_" + Date.now();
-      
-      // Store the token
-      setToken(mockToken);
-      await AsyncStorage.setItem("access_token", mockToken);
-
-      // Mock user data based on email
-      const mockUser: User = {
-        id: 1,
-        email: email,
-        name: email.split('@')[0],
-        user_type: email.includes('patient') ? 'patient' : 'doctor',
-        ...(email.includes('doctor') ? { license_number: 'LIC123456' } : {}),
-        ...(email.includes('patient') ? { age: 25, gender: 'Male' } : {})
-      };
-
-      setUser(mockUser);
-      await AsyncStorage.setItem("user", JSON.stringify(mockUser));
-      
-    } catch (error: any) {
+      // 3) fetch full user profile
+      await fetchCurrentUser(tokenResp.access_token);
+    } catch (error) {
       console.error("Login failed:", error);
-      if (error.message === "Network Error") {
-        throw new Error("No internet connection");
-      } else if (error.response?.status === 401) {
-        throw new Error("Invalid email or password");
-      } else if (error.response?.status === 404) {
-        throw new Error("API endpoint not found");
-      } else {
-        throw new Error(error.message || "An unexpected error occurred");
-      }
+      throw error;
     } finally {
       setLoading(false);
     }
@@ -130,11 +91,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const checkAuth = async () => {
     try {
       const storedToken = await AsyncStorage.getItem("access_token");
-      const storedUser = await AsyncStorage.getItem("user");
-      
-      if (storedToken && storedUser) {
+      if (storedToken) {
         setToken(storedToken);
-        setUser(JSON.parse(storedUser));
+        await fetchCurrentUser(storedToken);
       }
     } catch (err) {
       console.error("Error restoring auth:", err);
