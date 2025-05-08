@@ -1,9 +1,9 @@
+import StripeProvider from '@/components/stripe-provider';
 import { AuthProvider } from '@/context/AuthContext';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
-
 const RootLayout = () => {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
@@ -16,6 +16,7 @@ const RootLayout = () => {
   }
 
   return (
+    <StripeProvider>
     <ActionSheetProvider>
       <AuthProvider>
         <Stack screenOptions={{ headerShown: false }}>
@@ -34,6 +35,7 @@ const RootLayout = () => {
         </Stack>
       </AuthProvider>
     </ActionSheetProvider>
+    </StripeProvider>
   );
 };
 

@@ -1,3 +1,4 @@
+import CheckoutForm from "@/components/checkout-form.native";
 import DoctorSignup from "@/components/DoctorSignup";
 import LoginSignupHeader from "@/components/LoginSignupHeader";
 import PatientSignup from "@/components/PatientSignup";
@@ -9,6 +10,7 @@ import { router } from "expo-router";
 import React, { useState } from "react";
 import { Alert, SafeAreaView, ScrollView, StyleSheet, Text } from "react-native";
 
+
 export default function Signup() {
   const [selectedRole, setSelectedRole] = useState("Doctor");
   const [name, setName] = useState("");
@@ -17,7 +19,10 @@ export default function Signup() {
   const [licenseNumber, setLicenseNumber] = useState("");
   const [gender, setGender] = useState("Male");
   const [age, setAge] = useState("");
+  const [paymentConfirmed, setPaymentConfirmed] = useState(false);
 
+
+ 
   const handleSignup = async () => {
     let payload = {};
 
@@ -43,17 +48,17 @@ export default function Signup() {
     try {
       const response = await api.post("/signup", payload);
       console.log("Signup successful", response.data);
-      
+
       // Redirect based on role
       if (selectedRole === "Doctor") {
         // router.push("/(tabs)/doctor_dashboard");
-      } else if (selectedRole==="Patient"){
+      } else if (selectedRole === "Patient") {
         //TODO: update this
         // router.push("/(tabs)/home");
-      }else{
+      } else {
         Alert.alert("some error occured")
       }
-    } catch (error:any) {
+    } catch (error: any) {
       console.error(
         "Signup failed",
         error.response ? error.response.data : error.message
@@ -102,7 +107,13 @@ export default function Signup() {
           />
         )}
 
-        <PrimaryButton label="Sign Up" onPress={handleSignup} />
+        <CheckoutForm amount={300} />
+
+        <PrimaryButton
+          label="Sign Up"
+          onPress={handleSignup}
+          
+        />
         <Text style={styles.questionText}>Already have an account?</Text>
         <SecondaryLink text="Login" onPress={handleLogin} />
       </ScrollView>
