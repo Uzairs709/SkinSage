@@ -25,14 +25,14 @@ type Message = {
 };
 
 export default function Messages() {
-  const { docId, name, image } = useLocalSearchParams<{
+  const { docId, patientName, patientImage } = useLocalSearchParams<{
     docId: string;
-    name: string;
-    image: string;
+    patientName: string;
+    patientImage: string;
   }>();
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
-  const userType = "patient" as "doctor" | "patient";
+  const userType = "doctor" as "doctor" | "patient";
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [text, setText] = useState("");
@@ -55,30 +55,6 @@ export default function Messages() {
     setMessages((prev) => [...prev, newMsg]);
     setText("");
     setPickedImage(null);
-
-    if (userType === "patient" && pickedImage) {
-      setTimeout(() => {
-        const aiResults =
-          "AI Analysis:\n1. Warts 70%\n2. Acne 20%\n3. Eczema 10%";
-        const prescription =
-          "Based on the image, I've prescribed medicines. Please check your profile.";
-
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: Date.now() + 1,
-            sender: "doctor",
-            image_ai_generated: true,
-            ai_analysis: aiResults,
-          },
-          {
-            id: Date.now() + 2,
-            sender: "doctor",
-            text: prescription,
-          },
-        ]);
-      }, 1000);
-    }
   };
 
   const pickImage = async () => {
@@ -125,9 +101,9 @@ export default function Messages() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Image source={{ uri: image }} style={styles.profileImage} />
+        <Image source={{ uri: patientImage }} style={styles.profileImage} />
         <View style={styles.nameStatusContainer}>
-          <Text style={styles.docName}>{name}</Text>
+          <Text style={styles.patientName}>{patientName}</Text>
           <Text style={styles.onlineStatus}>● Online</Text>
         </View>
         <View style={styles.headerIcons}>
@@ -181,16 +157,22 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "center",
   },
-  docName: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#2d2d2d",
-    marginBottom: 2,
-  },
+  //   docName: {
+  //     fontSize: 16,
+  //     fontWeight: "bold",
+  //     color: "#2d2d2d",
+  //     marginBottom: 2,
+  //   },
   onlineStatus: {
     color: "green",
     fontSize: 12,
     marginTop: 2,
+  },
+  patientName: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#2d2d2d",
+    marginBottom: 2,
   },
   profileImage: {
     width: 42,

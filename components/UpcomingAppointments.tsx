@@ -1,15 +1,18 @@
+import { useRouter } from "expo-router";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-
 type AppointmentProps = {
+  // patientId: string;
   patientName: string;
   patientDescription: string;
   appointmentDay: string;
   appointmentDate: string;
   appointmentTime: string;
 };
+const router = useRouter();
 
 const UpcomingAppointments: React.FC<AppointmentProps> = ({
+  // patientId,
   patientName,
   patientDescription,
   appointmentDay,
@@ -36,8 +39,10 @@ const UpcomingAppointments: React.FC<AppointmentProps> = ({
     <View style={styles.appointmentTimeContainer}>
       <Text style={styles.appointmentTime}>{appointmentTime}</Text>
     </View>
+    {/* <TouchableOpacity onPress={handleChatPress} style={styles.chatButton}>
+      <Icon name="message-circle" size={20} color="#007bff" />
+    </TouchableOpacity> */}
   </View>
-
 );
 
 const styles = StyleSheet.create({
@@ -55,6 +60,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 10,
     elevation: 5,
+    marginTop: 15,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -80,7 +86,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingLeft: 16,
     paddingRight: 8,
-    minWidth: 0, 
+    minWidth: 0,
   },
   appointmentTimeContainer: {
     flexShrink: 0,
@@ -94,8 +100,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     borderRadius: 50,
     textAlign: "center",
-    minWidth: 60, 
-  }, 
+    minWidth: 60,
+  },
   patientName: {
     fontWeight: "bold",
     marginBottom: 2,

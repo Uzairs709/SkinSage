@@ -1,9 +1,9 @@
+import { HapticTab } from "@/components/HapticTab";
+import { Colors } from "@/constants/Colors";
 import { Tabs } from "expo-router";
-import { StyleSheet, TouchableOpacity, View,Text } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 import IconCamera from "react-native-vector-icons/MaterialIcons";
-import { Colors } from "@/constants/Colors";
-import { HapticTab } from "@/components/HapticTab";
 
 export default function TabLayout() {
   return (
@@ -12,9 +12,8 @@ export default function TabLayout() {
         tabBarShowLabel: false,
         tabBarStyle: styles.bottomNav,
         tabBarActiveTintColor: Colors.light.primary,
-        headerShown:false,
+        headerShown: false,
         tabBarButton: HapticTab,
-        
       }}
     >
       {/* Home Tab */}
@@ -50,7 +49,10 @@ export default function TabLayout() {
 
 // ✅ Fixed Camera Button Component
 const CameraButton = ({ onPress, ...props }: any) => (
-  <TouchableOpacity onPress={onPress} style={[styles.cameraButton, props.style]}>
+  <TouchableOpacity
+    onPress={onPress}
+    style={[styles.cameraButton, props.style]}
+  >
     <View style={styles.cameraButtonInner}>
       <IconCamera name="camera-alt" size={28} color={"#fff"} />
     </View>
