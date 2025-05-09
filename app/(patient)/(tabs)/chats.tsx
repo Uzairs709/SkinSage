@@ -1,103 +1,89 @@
+import ChatItem from "@/components/ChatItem"; // Adjust the path if needed
+import Ionicons from "@expo/vector-icons/build/Ionicons";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   FlatList,
-  Image,
+  SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
 
-const chats = [
-  {
-    id: "1",
-    name: "Dr. Sarah Malik",
-    image: "https://cdn-icons-png.flaticon.com/512/4140/4140051.png",
-  },
-  {
-    id: "2",
-    name: "Dr. Muhammad Uzair",
-    image: "https://i.ibb.co/HD0P69zD/Muhammad-Uzair.jpg",
-  },
-  {
-    id: "3",
-    name: "Dr. Ayesha Raza",
-    image: "https://cdn-icons-png.flaticon.com/512/4140/4140039.png",
-  },
-];
+interface ChatUser {
+  id: string;
+  name: string;
+  lastMessage: string;
+  avatarUrl?: string;
+}
 
-const ChatsScreen = () => {
+export default function ChatList() {
   const router = useRouter();
+  const [chatUsers, setChatUsers] = useState<ChatUser[]>([]);
+
+  useEffect(() => {
+    // Dummy data – replace with actual API call later
+    setChatUsers([
+      {
+        id: "p001",
+        name: "Ali Khan",
+        lastMessage: "Sent an image for treatment",
+        avatarUrl: "https://i.pravatar.cc/150?img=3",
+      },
+      {
+        id: "p002",
+        name: "Sara Malik",
+        lastMessage: "Zoom Meet for Skin checkup tomorrow at 2PM",
+        avatarUrl: "https://i.pravatar.cc/150?img=4",
+      },
+    ]);
+  }, []);
+
+  const handleOpenChat = (id: string, name: string, image: string) => {
+    const user = chatUsers.find(u => u.id === id);
+    router.push({
+      pathname: "/(patient)/messages/[docId]",
+      params: { docId: id, name: name, image: image },
+    });
+  };
 
   return (
-    <FlatList
-      data={chats}
-      keyExtractor={(item) => item.id}
-      renderItem={({ item }) => (
-        <TouchableOpacity
-          style={styles.chatCard}
-          onPress={() =>
-            router.push({
-              pathname: "/(patient)/messages",
-              params: {
-                name: item.name,
-                image: item.image,
-                id: item.id,
-              },
-            })
-          }
-        >
-          <Image source={{ uri: item.image }} style={styles.avatar} />
-          <View style={styles.textContainer}>
-            <Text style={styles.name}>{item.name}</Text>
-            {/* <Text style={styles.sub}>Medical Profile</Text> */}
-          </View>
-          <Image
-            source={{
-              uri: "https://img.icons8.com/ios-glyphs/30/4CAF50/speech-bubble--v1.png",
-            }}
-            style={styles.chatIcon}
-          />
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={24} color="#3e663e" />
         </TouchableOpacity>
-      )}
-    />
-  );
-};
+        <Text style={styles.heading}>Chats</Text>
+      </View>
 
-export default ChatsScreen;
+      <FlatList
+        data={chatUsers}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <ChatItem user={item} onPress={() => handleOpenChat(item.id, item.name, item.avatarUrl || "")} />
+        )}
+      />
+    </SafeAreaView>
+  );
+}
 
 const styles = StyleSheet.create({
-  chatCard: {
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    padding: 16,
+    marginTop: 20,
+  },
+  header: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
-    padding: 15,
-    borderBottomWidth: 1,
-    borderColor: "#ddd",
-    justifyContent: "space-between",
+    marginBottom: 0,
   },
-  avatar: {
-    width: 45,
-    height: 45,
-    borderRadius: 25,
-    marginRight: 15,
-  },
-  textContainer: {
-    flex: 1,
+  heading: {
+    fontSize: 22,
+    fontWeight: "bold",
     marginLeft: 10,
-  },
-  name: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  sub: {
-    fontSize: 12,
-    color: "#4CAF50",
-  },
-  chatIcon: {
-    width: 24,
-    height: 24,
-    tintColor: "#4CAF50",
+    marginTop: 10,
   },
 });

@@ -1,9 +1,8 @@
 import { HapticTab } from "@/components/HapticTab";
 import { Colors } from "@/constants/Colors";
+import { Feather, MaterialIcons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import Icon from "react-native-vector-icons/Feather";
-import IconCamera from "react-native-vector-icons/MaterialIcons";
 
 export default function TabLayout() {
   return (
@@ -12,8 +11,9 @@ export default function TabLayout() {
         tabBarShowLabel: false,
         tabBarStyle: styles.bottomNav,
         tabBarActiveTintColor: Colors.light.primary,
-        headerShown: false,
+        headerShown:false,
         tabBarButton: HapticTab,
+        
       }}
     >
       {/* Home Tab */}
@@ -21,7 +21,7 @@ export default function TabLayout() {
         name="doctor_dashboard"
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Icon name="home" size={size} color={color} />
+            <Feather name="home" size={size} color={color} />
           ),
         }}
       />
@@ -39,7 +39,7 @@ export default function TabLayout() {
         name="profile"
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Icon name="user" size={size} color={color} />
+            <Feather name="user" size={size} color={color} />
           ),
         }}
       />
@@ -49,12 +49,9 @@ export default function TabLayout() {
 
 // ✅ Fixed Camera Button Component
 const CameraButton = ({ onPress, ...props }: any) => (
-  <TouchableOpacity
-    onPress={onPress}
-    style={[styles.cameraButton, props.style]}
-  >
+  <TouchableOpacity onPress={onPress} style={[styles.cameraButton, props.style]}>
     <View style={styles.cameraButtonInner}>
-      <IconCamera name="camera-alt" size={28} color={"#fff"} />
+      <MaterialIcons name="camera-alt" size={28} color={"#fff"} />
     </View>
   </TouchableOpacity>
 );
@@ -78,7 +75,7 @@ const styles = StyleSheet.create({
   },
   cameraButton: {
     position: "absolute",
-    bottom: 5, // Moves it slightly above the navbar
+    bottom: 1, // Moves it slightly above the navbar
     alignSelf: "center",
   },
   cameraButtonInner: {

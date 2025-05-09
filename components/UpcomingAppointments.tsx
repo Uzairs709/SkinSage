@@ -2,7 +2,7 @@ import { useRouter } from "expo-router";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 type AppointmentProps = {
-  // patientId: string;
+  patientId: string;
   patientName: string;
   patientDescription: string;
   appointmentDay: string;
@@ -12,7 +12,7 @@ type AppointmentProps = {
 const router = useRouter();
 
 const UpcomingAppointments: React.FC<AppointmentProps> = ({
-  // patientId,
+  patientId,
   patientName,
   patientDescription,
   appointmentDay,
@@ -39,9 +39,6 @@ const UpcomingAppointments: React.FC<AppointmentProps> = ({
     <View style={styles.appointmentTimeContainer}>
       <Text style={styles.appointmentTime}>{appointmentTime}</Text>
     </View>
-    {/* <TouchableOpacity onPress={handleChatPress} style={styles.chatButton}>
-      <Icon name="message-circle" size={20} color="#007bff" />
-    </TouchableOpacity> */}
   </View>
 );
 
@@ -68,7 +65,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    width: "100%",
+    maxWidth: "90%",
+    flex: 1,
+    alignSelf: "center",
+    maxHeight: "15%"
   },
 
   appointmentDate: {

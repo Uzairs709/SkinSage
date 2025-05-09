@@ -8,6 +8,7 @@ import React, { useState } from "react";
 import {
   FlatList,
   Image,
+  SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
@@ -99,12 +100,14 @@ export default function Messages() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={24} color="#3e663e" />
+        </TouchableOpacity>
         <Image source={{ uri: patientImage }} style={styles.profileImage} />
         <View style={styles.nameStatusContainer}>
           <Text style={styles.patientName}>{patientName}</Text>
-          <Text style={styles.onlineStatus}>● Online</Text>
         </View>
         <View style={styles.headerIcons}>
           <TouchableOpacity onPress={() => setModalVisible(true)}>
@@ -139,13 +142,19 @@ export default function Messages() {
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         prescriptions={prescriptions}
+        noteText="Take with food and drink plenty of water."
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff" },
+  container: { 
+    flex: 1, 
+    backgroundColor: "#fff",
+    paddingTop: 20 , 
+    paddingBottom: 20
+  },
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -157,17 +166,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "center",
   },
-  //   docName: {
-  //     fontSize: 16,
-  //     fontWeight: "bold",
-  //     color: "#2d2d2d",
-  //     marginBottom: 2,
-  //   },
-  onlineStatus: {
-    color: "green",
-    fontSize: 12,
-    marginTop: 2,
-  },
+   
   patientName: {
     fontSize: 16,
     fontWeight: "bold",

@@ -2,18 +2,20 @@ import BottomNavigationBar from "@/app/(doctor)/(tabs)/_layout";
 import DoctorProfile from "@/components/DoctorProfile";
 import UpcomingAppointments from "@/components/UpcomingAppointments";
 import api from "@/utils/api";
+import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router"; // Make sure this is at the top
-import Icon from "react-native-vector-icons/Feather";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useState } from "react";
 
+import { Colors } from "@/constants/Colors";
 import {
   SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
+  View,
 } from "react-native";
 
 interface FollowUp {
@@ -72,108 +74,38 @@ export default function doctor_dashboard() {
         const doctorId = user.id;
         setDoctorName(user.name || "Doctor"); // Set doctor name for profile
 
+  
         const res = await api.get(`/doctors/${doctorId}/followups`);
         console.log("Appointments:", res.data);
-
+  
         const data: FollowUp[] = res.data;
-
-        setAppointments([
-          {
-            patientId: "p001",
-            patientName: "Ali Khan",
-            patientDescription: "High fever and headache",
-            appointmentDay: "Mon",
-            appointmentDate: "05",
-            appointmentTime: "10:00 AM",
-          },
-          {
-            patientId: "p002",
-            patientName: "Sara Malik",
-            patientDescription: "Routine checkup",
-            appointmentDay: "Tue",
-            appointmentDate: "06",
-            appointmentTime: "02:30 PM",
-          },
-          {
-            patientId: "p003",
-            patientName: "Ahmed Raza",
-            patientDescription: "Follow-up after surgery",
-            appointmentDay: "Wed",
-            appointmentDate: "07",
-            appointmentTime: "12:15 PM",
-          },
-          {
-            patientId: "p004",
-            patientName: "Fatima Zahra",
-            patientDescription: "Blood pressure concerns",
-            appointmentDay: "Thu",
-            appointmentDate: "08",
-            appointmentTime: "11:00 AM",
-          },
-          {
-            patientId: "p005",
-            patientName: "Hassan Ali",
-            patientDescription: "Chronic back pain",
-            appointmentDay: "Fri",
-            appointmentDate: "09",
-            appointmentTime: "04:00 PM",
-          },
-          {
-            patientId: "p006",
-            patientName: "Mehwish Noor",
-            patientDescription: "Skin allergy",
-            appointmentDay: "Sat",
-            appointmentDate: "10",
-            appointmentTime: "09:30 AM",
-          },
-          {
-            patientId: "p007",
-            patientName: "Bilal Ahmed",
-            patientDescription: "Diabetes follow-up",
-            appointmentDay: "Sun",
-            appointmentDate: "11",
-            appointmentTime: "01:45 PM",
-          },
-          {
-            patientId: "p008",
-            patientName: "Mehwish Noor",
-            patientDescription: "Skin allergy",
-            appointmentDay: "Sat",
-            appointmentDate: "10",
-            appointmentTime: "09:30 AM",
-          },
-          {
-            patientId: "p009",
-            patientName: "Bilal Ahmed",
-            patientDescription: "Diabetes follow-up",
-            appointmentDay: "Sun",
-            appointmentDate: "11",
-            appointmentTime: "01:45 PM",
-          },
-        ]);
+        setAppointments(data);
       } catch (err: any) {
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
-
     fetchAppointments();
   }, []);
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.dashboardContainer}>
-        <DoctorProfile name={`${doctorName}`} />
+
+      <View style={styles.headerRow}>
+        <View style={styles.docName}>
+          <DoctorProfile name={`${doctorName}`} />
+        </View>
         <TouchableOpacity
-          onPress={() => handleChatPress("p001", "Ali Khan")} // Call with patientId and patientName
+          onPress={() => handleChatPress("p001", "Ali Khan")}
           style={styles.chatButton}
         >
-          <Icon name="message-circle" size={25} color="#007bff" />
+          <Feather name="message-circle" size={28} color={Colors.dark.primary} />
         </TouchableOpacity>
+      </View>
 
-        <Text style={styles.appointmentsHeading}>Upcoming appointments</Text>
-
+      <Text style={styles.appointmentsHeading}>Upcoming appointments</Text>
+      <ScrollView contentContainerStyle={styles.dashboardContainer} showsVerticalScrollIndicator={false}>
         {appointments &&
           appointments.map((apt, i) => (
             <UpcomingAppointments
@@ -203,6 +135,7 @@ const styles = StyleSheet.create({
     alignItems: "center", // Center content horizontally
     justifyContent: "flex-start", // Align items at the top
     width: "100%", // Ensures full width of the screen
+    paddingBottom: 100,
   },
   appointmentsHeading: {
     fontSize: 18,
@@ -210,11 +143,21 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     marginLeft: 16,
     alignSelf: "flex-start",
+    color: Colors.dark.primary,
+  },
+
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
+    paddingHorizontal: 10,
+    marginTop: 10,
   },
   chatButton: {
-    padding: 4,
-    marginLeft: 350,
-    marginTop: -40,
-    // color: "green",
+    padding: -10,
+  },
+  docName: {
+    flex: 1,
   },
 });
