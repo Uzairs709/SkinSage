@@ -17,8 +17,8 @@ const chats = [
   },
   {
     id: "2",
-    name: "Dr. Ahmed Khan",
-    image: "https://cdn-icons-png.flaticon.com/512/4140/4140048.png",
+    name: "Dr. Muhammad Uzair",
+    image: "https://i.ibb.co/HD0P69zD/Muhammad-Uzair.jpg",
   },
   {
     id: "3",
