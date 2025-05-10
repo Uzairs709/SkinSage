@@ -2,11 +2,25 @@ import BottomNavigationBar from "@/app/(doctor)/(tabs)/_layout";
 import DoctorProfile from "@/components/DoctorProfile";
 import UpcomingAppointments from "@/components/UpcomingAppointments";
 import api from "@/utils/api";
+import { Feather } from "@expo/vector-icons";
+import { useRouter } from "expo-router"; // Make sure this is at the top
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, ScrollView, StyleSheet, Text } from "react-native";
+
+import { Colors } from "@/constants/Colors";
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 interface FollowUp {
+  patientId: string;
+
   patientName: string;
   patientDescription: string;
   appointmentDay: string;
@@ -26,16 +40,28 @@ const ErrorMessage = ({ message }: { message: string }) => (
 );
 
 const NoAppointmentsMessage = () => (
-  <Text style={{ margin: 10, fontSize: 16 }}>No follow-up appointments for today.</Text>
+  <Text style={{ margin: 10, fontSize: 16 }}>
+    No follow-up appointments for today.
+  </Text>
 );
 
-
 export default function doctor_dashboard() {
-  const [appointments, setAppointments] = useState<FollowUp[]|null>(null);
+  const [appointments, setAppointments] = useState<FollowUp[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string|undefined>(undefined);
+  const [error, setError] = useState<string | undefined>(undefined);
   const [doctorName, setDoctorName] = useState<string>("Doctor");
+  const router = useRouter(); // Use inside the component
 
+  // Move handleChatPress function outside of useEffect
+  const handleChatPress = (patientId: string, patientName: string) => {
+    router.push({
+      pathname: "/(doctor)/chatlist",
+      params: {
+        patientId,
+        patientName,
+      },
+    });
+  };
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -60,22 +86,31 @@ export default function doctor_dashboard() {
         setLoading(false);
       }
     };
-  
     fetchAppointments();
   }, []);
-  
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.dashboardContainer}>
-      <DoctorProfile name={`${doctorName}`} />
-      
-      <Text style={styles.appointmentsHeading}>Upcoming appointments</Text>
 
-      {appointments &&
+      <View style={styles.headerRow}>
+        <View style={styles.docName}>
+          <DoctorProfile name={`${doctorName}`} />
+        </View>
+        <TouchableOpacity
+          onPress={() => handleChatPress("p001", "Ali Khan")}
+          style={styles.chatButton}
+        >
+          <Feather name="message-circle" size={28} color={Colors.dark.primary} />
+        </TouchableOpacity>
+      </View>
+
+      <Text style={styles.appointmentsHeading}>Upcoming appointments</Text>
+      <ScrollView contentContainerStyle={styles.dashboardContainer} showsVerticalScrollIndicator={false}>
+        {appointments &&
           appointments.map((apt, i) => (
             <UpcomingAppointments
               key={i}
+              patientId={apt.patientId}
               patientName={apt.patientName}
               patientDescription={apt.patientDescription}
               appointmentDay={apt.appointmentDay}
@@ -86,8 +121,8 @@ export default function doctor_dashboard() {
         <BottomNavigationBar />
       </ScrollView>
     </SafeAreaView>
-  )
-};
+  );
+}
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -100,6 +135,7 @@ const styles = StyleSheet.create({
     alignItems: "center", // Center content horizontally
     justifyContent: "flex-start", // Align items at the top
     width: "100%", // Ensures full width of the screen
+    paddingBottom: 100,
   },
   appointmentsHeading: {
     fontSize: 18,
@@ -107,6 +143,21 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     marginLeft: 16,
     alignSelf: "flex-start",
+    color: Colors.dark.primary,
+  },
+
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
+    paddingHorizontal: 10,
+    marginTop: 10,
+  },
+  chatButton: {
+    padding: -10,
+  },
+  docName: {
+    flex: 1,
   },
 });
-

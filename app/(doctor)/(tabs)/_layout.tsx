@@ -1,9 +1,8 @@
-import { Tabs } from "expo-router";
-import { StyleSheet, TouchableOpacity, View,Text } from "react-native";
-import Icon from "react-native-vector-icons/Feather";
-import IconCamera from "react-native-vector-icons/MaterialIcons";
-import { Colors } from "@/constants/Colors";
 import { HapticTab } from "@/components/HapticTab";
+import { Colors } from "@/constants/Colors";
+import { Feather, MaterialIcons } from "@expo/vector-icons";
+import { Tabs } from "expo-router";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 export default function TabLayout() {
   return (
@@ -22,7 +21,7 @@ export default function TabLayout() {
         name="doctor_dashboard"
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Icon name="home" size={size} color={color} />
+            <Feather name="home" size={size} color={color} />
           ),
         }}
       />
@@ -40,7 +39,7 @@ export default function TabLayout() {
         name="profile"
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Icon name="user" size={size} color={color} />
+            <Feather name="user" size={size} color={color} />
           ),
         }}
       />
@@ -52,7 +51,7 @@ export default function TabLayout() {
 const CameraButton = ({ onPress, ...props }: any) => (
   <TouchableOpacity onPress={onPress} style={[styles.cameraButton, props.style]}>
     <View style={styles.cameraButtonInner}>
-      <IconCamera name="camera-alt" size={28} color={"#fff"} />
+      <MaterialIcons name="camera-alt" size={28} color={"#fff"} />
     </View>
   </TouchableOpacity>
 );
@@ -76,7 +75,7 @@ const styles = StyleSheet.create({
   },
   cameraButton: {
     position: "absolute",
-    bottom: 5, // Moves it slightly above the navbar
+    bottom: 1, // Moves it slightly above the navbar
     alignSelf: "center",
   },
   cameraButtonInner: {

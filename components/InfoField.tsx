@@ -2,33 +2,63 @@ import { useFonts } from 'expo-font';
 import React from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
+type InputType = 'text' | 'email' | 'password' | 'number';
+
 interface InfoFieldProps {
-  label: string; // The label is a string
-  value?: string; // The initial value is a string to be shown in the input field (optional)
-  editable?: boolean; // editable is optional and defaults to false
-  labelWidth?: number; // Optional label width
-  isPassword?: boolean; // Whether the input is for a password
-  placeholder?: string; // Placeholder text
+  label: string;
+  value?: string;
+  editable?: boolean;
+  labelWidth?: number;
+  placeholder?: string;
   setValue?: (value: string) => void;
+  isPassword?: boolean;
+  inputType?: InputType;
 }
 
 const InfoField: React.FC<InfoFieldProps> = ({
   label = "",
-  value ,
+  value,
   editable = false,
   labelWidth = 80,
-  isPassword = false,
   placeholder = "",
   setValue,
+  isPassword = false,
+  inputType = 'text',
 }) => {
-
   let [fontsLoaded] = useFonts({
-    'Epilogue': require('../assets/fonts/Epilogue-VariableFont_wght.ttf'), // Load your custom font
+    'Epilogue': require('../assets/fonts/Epilogue-VariableFont_wght.ttf'),
   });
 
   if (!fontsLoaded) {
-    return <Text>Loading...</Text>; // Show loading text while the font is being loaded
+    return <Text>Loading...</Text>;
   }
+
+  const handleChangeText = (text: string) => {
+    if (setValue) {
+      if (inputType === 'number') {
+        // Only allow numbers
+        const numericValue = text.replace(/[^0-9]/g, '');
+        setValue(numericValue);
+      } else if (inputType === 'email') {
+        // Allow email format
+        setValue(text);
+      } else {
+        // Default text input
+        setValue(text);
+      }
+    }
+  };
+
+  const getKeyboardType = () => {
+    switch (inputType) {
+      case 'number':
+        return 'numeric';
+      case 'email':
+        return 'email-address';
+      default:
+        return 'default';
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -37,11 +67,12 @@ const InfoField: React.FC<InfoFieldProps> = ({
         style={styles.input}
         value={value}
         editable={editable}
-        onChangeText={setValue} // Update the state when the text changes
-        placeholderTextColor="#6B7280" // Gray
-        secureTextEntry={isPassword}
+        onChangeText={handleChangeText}
+        placeholderTextColor="#6B7280"
         placeholder={placeholder}
         autoCapitalize="none"
+        secureTextEntry={isPassword || inputType === 'password'}
+        keyboardType={getKeyboardType()}
       />
     </View>
   );
@@ -55,7 +86,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    color: '#3D6734', // Dark gray
+    color: '#3D6734',
     marginBottom: -8,
     marginLeft: 13,
     backgroundColor: '#fff',
@@ -64,8 +95,8 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   input: {
-    backgroundColor: '#fff', // Light gray
-    borderColor: '#D1D5DB', // Border gray
+    backgroundColor: '#fff',
+    borderColor: '#D1D5DB',
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 10,
