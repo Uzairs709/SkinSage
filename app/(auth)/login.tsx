@@ -91,6 +91,7 @@ export default function LoginScreen() {
           placeholder="Enter email"
           editable={true}
           setValue={setEmail}
+          inputType="email"
         />
         <PasswordField
           label="Password"

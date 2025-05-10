@@ -2,6 +2,8 @@ import { useFonts } from 'expo-font';
 import React from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
+type InputType = 'text' | 'email' | 'password' | 'number';
+
 interface InfoFieldProps {
   label: string;
   value?: string;
@@ -10,6 +12,7 @@ interface InfoFieldProps {
   placeholder?: string;
   setValue?: (value: string) => void;
   isPassword?: boolean;
+  inputType?: InputType;
 }
 
 const InfoField: React.FC<InfoFieldProps> = ({
@@ -20,6 +23,7 @@ const InfoField: React.FC<InfoFieldProps> = ({
   placeholder = "",
   setValue,
   isPassword = false,
+  inputType = 'text',
 }) => {
   let [fontsLoaded] = useFonts({
     'Epilogue': require('../assets/fonts/Epilogue-VariableFont_wght.ttf'),
@@ -29,6 +33,33 @@ const InfoField: React.FC<InfoFieldProps> = ({
     return <Text>Loading...</Text>;
   }
 
+  const handleChangeText = (text: string) => {
+    if (setValue) {
+      if (inputType === 'number') {
+        // Only allow numbers
+        const numericValue = text.replace(/[^0-9]/g, '');
+        setValue(numericValue);
+      } else if (inputType === 'email') {
+        // Allow email format
+        setValue(text);
+      } else {
+        // Default text input
+        setValue(text);
+      }
+    }
+  };
+
+  const getKeyboardType = () => {
+    switch (inputType) {
+      case 'number':
+        return 'numeric';
+      case 'email':
+        return 'email-address';
+      default:
+        return 'default';
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={[styles.label, { width: labelWidth }]}>{label}</Text>
@@ -36,11 +67,12 @@ const InfoField: React.FC<InfoFieldProps> = ({
         style={styles.input}
         value={value}
         editable={editable}
-        onChangeText={setValue}
+        onChangeText={handleChangeText}
         placeholderTextColor="#6B7280"
         placeholder={placeholder}
         autoCapitalize="none"
-        secureTextEntry={isPassword}
+        secureTextEntry={isPassword || inputType === 'password'}
+        keyboardType={getKeyboardType()}
       />
     </View>
   );

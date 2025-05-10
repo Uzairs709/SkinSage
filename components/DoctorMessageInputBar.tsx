@@ -1,29 +1,26 @@
-// components/InputBar.tsx
 import { Colors } from "@/constants/Colors";
-import { Entypo, Ionicons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import {
-  NativeSyntheticEvent,
-  StyleSheet,
-  TextInput,
-  TextInputSubmitEditingEventData,
-  TouchableOpacity,
-  View,
+    NativeSyntheticEvent,
+    StyleSheet,
+    TextInput,
+    TextInputSubmitEditingEventData,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
-interface InputBarProps {
+interface DoctorMessageInputBarProps {
   text: string;
   onTextChange: (text: string) => void;
   onSend: () => void;
-  onPickImage: () => void;
 }
 
-export default function InputBar({
+export default function DoctorMessageInputBar({
   text,
   onTextChange,
   onSend,
-  onPickImage,
-}: InputBarProps) {
+}: DoctorMessageInputBarProps) {
   const handleSubmit = (e: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => {
     if (text.trim()) {
       onSend();
@@ -32,9 +29,6 @@ export default function InputBar({
 
   return (
     <View style={styles.inputContainer}>
-      <TouchableOpacity onPress={onPickImage}>
-        <Entypo name="image" size={24} color={Colors.dark.primary} />
-      </TouchableOpacity>
       <TextInput
         style={styles.textInput}
         placeholder="Write your message"
@@ -68,4 +62,4 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     marginHorizontal: 10,
   },
-});
+}); 

@@ -1,6 +1,6 @@
+import Icon from '@expo/vector-icons/Feather';
 import React, { useState } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import Icon from 'react-native-vector-icons/Feather';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import InfoField from './InfoField';
 
 interface PasswordFieldProps {
@@ -10,6 +10,7 @@ interface PasswordFieldProps {
   placeholder?: string;
   editable?: boolean;
   labelWidth?: number;
+  showError?: boolean;
 }
 
 const PasswordField: React.FC<PasswordFieldProps> = ({
@@ -19,19 +20,26 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
   placeholder = "Enter Password",
   editable = true,
   labelWidth = 80,
+  showError = false,
 }) => {
   const [isVisible, setIsVisible] = useState(false);
+  const isPasswordTooShort = value.length > 0 && value.length < 6;
+
+  const handlePasswordChange = (text: string) => {
+    setValue(text);
+  };
 
   return (
     <View style={styles.inputContainer}>
       <InfoField
         label={label}
         value={value}
-        setValue={setValue}
+        setValue={handlePasswordChange}
         placeholder={placeholder}
         editable={editable}
         labelWidth={labelWidth}
         isPassword={!isVisible}
+        inputType="password"
       />
       <TouchableOpacity
         onPress={() => setIsVisible(!isVisible)}
@@ -44,6 +52,9 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
           style={styles.icon}
         />
       </TouchableOpacity>
+      {showError && isPasswordTooShort && (
+        <Text style={styles.errorText}>Password must be at least 6 characters long</Text>
+      )}
     </View>
   );
 };
@@ -62,6 +73,12 @@ const styles = StyleSheet.create({
   icon: {
     marginTop: -9,
     marginRight: 13,
+  },
+  errorText: {
+    color: "red",
+    fontSize: 14,
+    marginLeft: 20,
+    marginTop: 5,
   },
 });
 

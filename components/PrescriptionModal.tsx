@@ -1,15 +1,16 @@
 import { Colors } from "@/constants/Colors";
 import { BlurView } from "expo-blur";
-import React from "react";
+import React, { useState } from "react";
 import {
   Modal,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import PrescriptionMedicationList from "./PrescriptionMedicationList";
+import PrescriptionNote from "./PrescriptionNote";
 
 interface Prescription {
   medication: string;
@@ -21,14 +22,37 @@ interface PrescriptionModalProps {
   onClose: () => void;
   prescriptions: Prescription[];
   noteText: string;
+  isViewOnly?: boolean;
 }
 
 export default function PrescriptionModal({
   visible,
   onClose,
-  prescriptions,
-  noteText,
+  prescriptions: initialPrescriptions,
+  noteText: initialNoteText,
+  isViewOnly = false,
 }: PrescriptionModalProps) {
+  const [prescriptions, setPrescriptions] = useState(initialPrescriptions);
+  const [noteText, setNoteText] = useState(initialNoteText);
+  const [isEditing, setIsEditing] = useState(false);
+
+  const handleSave = () => {
+    // TODO: Implement save functionality
+    setIsEditing(false);
+  };
+
+  const addNewMedication = () => {
+    setPrescriptions([
+      ...prescriptions,
+      { medication: "", quantity: "" }
+    ]);
+  };
+
+  const removeMedication = (index: number) => {
+    const newPrescriptions = prescriptions.filter((_, idx) => idx !== index);
+    setPrescriptions(newPrescriptions);
+  };
+
   return (
     <Modal visible={visible} transparent animationType="slide">
       <TouchableWithoutFeedback onPress={onClose}>
@@ -39,30 +63,39 @@ export default function PrescriptionModal({
                 <Text style={styles.closeText}>×</Text>
               </TouchableOpacity>
 
-              <Text style={styles.title}>Prescription</Text>
-
-              <View style={styles.tableHeader}>
-                <Text style={styles.headerText}>Title</Text>
-                <Text style={styles.headerText}>Qty</Text>
+              <View style={styles.titleContainer}>
+                <Text style={styles.title}>Prescription</Text>
+                {!isViewOnly && (
+                  <TouchableOpacity 
+                    style={styles.editButton} 
+                    onPress={() => setIsEditing(!isEditing)}
+                  >
+                    <Text style={styles.editButtonText}>
+                      {isEditing ? "Cancel" : "Edit"}
+                    </Text>
+                  </TouchableOpacity>
+                )}
               </View>
 
-              <ScrollView>
-                {prescriptions.map((item, idx) => (
-                  <View style={styles.tableRow} key={idx}>
-                    <View style={styles.medicationCol}>
-                      <Text style={styles.itemText}>{`• ${item.medication}`}</Text>
-                    </View>
-                    <View style={styles.qtyCol}>
-                      <Text style={styles.itemText}>{item.quantity}</Text>
-                    </View>
-                  </View>
-                ))}
+              <PrescriptionMedicationList
+                prescriptions={prescriptions}
+                isEditing={isEditing}
+                onPrescriptionsChange={setPrescriptions}
+                onAddMedication={addNewMedication}
+                onRemoveMedication={removeMedication}
+              />
 
-                <Text style={styles.noteTitle}>Note</Text>
-                <Text style={styles.noteText}>
-                  {noteText}
-                </Text>
-              </ScrollView>
+              <PrescriptionNote
+                noteText={noteText}
+                isEditing={isEditing}
+                onNoteChange={setNoteText}
+              />
+
+              {isEditing && (
+                <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+                  <Text style={styles.saveButtonText}>Save Changes</Text>
+                </TouchableOpacity>
+              )}
             </View>
           </TouchableWithoutFeedback>
         </BlurView>
@@ -104,52 +137,38 @@ const styles = StyleSheet.create({
     color: Colors.dark.primary,
     fontWeight: "bold",
   },
+  titleContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 16,
+  },
   title: {
     fontSize: 34,
     fontWeight: "bold",
     color: "#fff",
-    marginBottom: 16,
   },
-  tableHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingBottom: 8,
-    borderBottomWidth: 1,
-    borderColor: "#fff",
+  editButton: {
+    backgroundColor: "#fff",
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    borderRadius: 15,
+  },
+  editButtonText: {
+    color: Colors.dark.primary,
+    fontWeight: "bold",
+  },
+  saveButton: {
+    backgroundColor: "#fff",
+    padding: 12,
+    borderRadius: 10,
+    marginTop: 20,
     marginBottom: 10,
+    alignItems: "center",
   },
-  headerText: {
-    fontWeight: "bold",
-    color: "#fff",
-    fontSize: 16,
-  },
-  noteTitle: {
-    marginTop: 16,
+  saveButtonText: {
+    color: Colors.dark.primary,
     fontWeight: "bold",
     fontSize: 16,
-    color: "#fff",
-  },
-  noteText: {
-    color: "#fff",
-    fontSize: 14,
-    marginTop: 6,
-    lineHeight: 18,
-  },
-  tableRow: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    marginBottom: 8,
-  },
-  medicationCol: {
-    flex: 4,
-    paddingRight: 10,
-  },
-  qtyCol: {
-    flex: 1,
-    alignItems: "flex-end",
-  },
-  itemText: {
-    color: "#fff",
-    fontSize: 14,
   },
 });

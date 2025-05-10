@@ -31,43 +31,81 @@ const PatientSignup: React.FC<PatientSignupProps> = ({
 }) => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordMatchError, setPasswordMatchError] = useState(false);
+  const [errors, setErrors] = useState({
+    name: false,
+    email: false,
+    password: false,
+    confirmPassword: false,
+    gender: false,
+    age: false,
+  });
 
   const handleConfirmPasswordChange = (text: string) => {
     setConfirmPassword(text);
     setPasswordMatchError(text !== password);
+    setErrors(prev => ({ ...prev, confirmPassword: text === "" }));
+  };
+
+  const validateField = (field: string, value: string) => {
+    setErrors(prev => ({ ...prev, [field]: value.trim() === "" }));
   };
 
   return (
     <View>
-      <InfoField
-        label="Name"
-        value={name}
-        setValue={setName}
-        placeholder="Enter Name"
-        editable
-      />
-      <InfoField
-        label="Email"
-        value={email}
-        setValue={setEmail}
-        placeholder="Enter Email"
-        editable
-      />
+      <View style={styles.fieldContainer}>
+        {errors.name && <Text style={styles.requiredLabel}>Name *</Text>}
+        <InfoField
+          label="Name"
+          value={name}
+          setValue={(text) => {
+            setName(text);
+            validateField("name", text);
+          }}
+          placeholder="Enter Name"
+          editable
+        />
+      </View>
 
-      <PasswordField
-        label="Password"
-        value={password}
-        setValue={setPassword}
-        placeholder="Enter Password"
-      />
+      <View style={styles.fieldContainer}>
+        {errors.email && <Text style={styles.requiredLabel}>Email *</Text>}
+        <InfoField
+          label="Email"
+          value={email}
+          setValue={(text) => {
+            setEmail(text);
+            validateField("email", text);
+          }}
+          placeholder="Enter Email"
+          editable
+          inputType="email"
+        />
+      </View>
 
-      <PasswordField
-        label="Confirm Password"
-        value={confirmPassword}
-        setValue={handleConfirmPasswordChange}
-        placeholder="Confirm Password"
-        labelWidth={150}
-      />
+      <View style={styles.fieldContainer}>
+        {errors.password && <Text style={styles.requiredLabel}>Password *</Text>}
+        <PasswordField
+          label="Password"
+          value={password}
+          setValue={(text) => {
+            setPassword(text);
+            validateField("password", text);
+          }}
+          placeholder="Enter Password"
+          showError={true}
+        />
+      </View>
+
+      <View style={styles.fieldContainer}>
+        {errors.confirmPassword && <Text style={styles.requiredLabel}>Confirm Password *</Text>}
+        <PasswordField
+          label="Confirm Password"
+          value={confirmPassword}
+          setValue={handleConfirmPasswordChange}
+          placeholder="Confirm Password"
+          labelWidth={150}
+          showError={true}
+        />
+      </View>
 
       {passwordMatchError && (
         <Text style={styles.errorText}>Passwords do not match!</Text>
@@ -75,11 +113,14 @@ const PatientSignup: React.FC<PatientSignupProps> = ({
 
       <View style={styles.row}>
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Gender</Text>
+          {errors.gender && <Text style={styles.requiredLabel}>Gender *</Text>}
           <View style={styles.pickerWrapper}>
             <Picker
               selectedValue={gender}
-              onValueChange={(value) => setGender(value)}
+              onValueChange={(value) => {
+                setGender(value);
+                validateField("gender", value);
+              }}
               style={styles.picker}
               dropdownIconColor={"#6B7280"}
             >
@@ -91,12 +132,17 @@ const PatientSignup: React.FC<PatientSignupProps> = ({
         </View>
 
         <View style={styles.inputContainer}>
+          {errors.age && <Text style={styles.requiredLabel}>Age *</Text>}
           <InfoField
             label="Age"
             value={age}
-            setValue={setAge}
+            setValue={(text) => {
+              setAge(text);
+              validateField("age", text);
+            }}
             placeholder="Enter Age"
             editable
+            inputType="number"
           />
         </View>
       </View>
@@ -116,6 +162,17 @@ const styles = StyleSheet.create({
   inputContainer: {
     flex: 1,
     marginHorizontal: 5,
+  },
+  fieldContainer: {
+    marginBottom: 5,
+  },
+  requiredLabel: {
+    fontSize: 14,
+    color: "red",
+    marginLeft: 20,
+    marginBottom: 5,
+    fontFamily: "Epilogue",
+    fontWeight: "500",
   },
   label: {
     fontSize: 14,

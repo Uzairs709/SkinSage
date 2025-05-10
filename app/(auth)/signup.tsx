@@ -21,7 +21,7 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [licenseNumber, setLicenseNumber] = useState("");
-  const [gender, setGender] = useState("Male");
+  const [gender, setGender] = useState("Select Gender");
   const [age, setAge] = useState("");
   const [designation, setDesignation] = useState("");
   const [specialization, setSpecialization] = useState("");

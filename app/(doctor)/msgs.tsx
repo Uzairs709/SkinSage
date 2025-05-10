@@ -1,29 +1,12 @@
 // /app/messages/[docId].tsx
 
+import DoctorChatHeader from "@/components/DoctorChatHeader";
+import DoctorMessageInputBar from "@/components/DoctorMessageInputBar";
+import DoctorMessageList, { Message } from "@/components/DoctorMessageList";
 import PrescriptionModal from "@/components/PrescriptionModal";
-import { Entypo, Ionicons } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
-import {
-  FlatList,
-  Image,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
-
-type Message = {
-  id: number;
-  sender: "patient" | "doctor";
-  text?: string;
-  image?: string;
-  image_ai_generated?: boolean;
-  ai_analysis?: string;
-};
+import { SafeAreaView, StyleSheet } from "react-native";
 
 export default function Messages() {
   const { docId, patientName, patientImage } = useLocalSearchParams<{
@@ -31,196 +14,69 @@ export default function Messages() {
     patientName: string;
     patientImage: string;
   }>();
-  const router = useRouter();
-  const [modalVisible, setModalVisible] = useState(false);
-  const userType = "doctor" as "doctor" | "patient";
-
+  const [viewModalVisible, setViewModalVisible] = useState(false);
+  const [addModalVisible, setAddModalVisible] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [text, setText] = useState("");
-  const [pickedImage, setPickedImage] = useState<string | null>(null);
   const [prescriptions] = useState([
     { medication: "Hydrocortisone cream", quantity: "1 tube" },
     { medication: "Antihistamine", quantity: "30 tablets" },
   ]);
 
   const handleSend = () => {
-    if (!text && !pickedImage) return;
+    if (!text) return;
 
     const newMsg: Message = {
       id: Date.now(),
-      sender: userType,
+      sender: "doctor",
       text,
-      image: pickedImage ?? undefined,
     };
 
     setMessages((prev) => [...prev, newMsg]);
     setText("");
-    setPickedImage(null);
-  };
-
-  const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 1,
-    });
-
-    if (!result.canceled && result.assets.length > 0) {
-      setPickedImage(result.assets[0].uri);
-    }
-  };
-
-  const renderItem = ({ item }: { item: Message }) => {
-    const isPatient = userType === "patient";
-    const isSenderPatient = item.sender === "patient";
-    const showAI = item.image_ai_generated && !isPatient;
-
-    const isOwnMessage =
-      (isPatient && isSenderPatient) || (!isPatient && !isSenderPatient);
-
-    return (
-      <View
-        style={[
-          styles.bubble,
-          isOwnMessage ? styles.patientBubble : styles.doctorBubble,
-        ]}
-      >
-        {item.image && (
-          <Image source={{ uri: item.image }} style={styles.msgImage} />
-        )}
-
-        {showAI && item.ai_analysis && (
-          <Text style={styles.msgText}>{item.ai_analysis}</Text>
-        )}
-
-        {item.text && (!item.image_ai_generated || isPatient) && (
-          <Text style={styles.msgText}>{item.text}</Text>
-        )}
-      </View>
-    );
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="#3e663e" />
-        </TouchableOpacity>
-        <Image source={{ uri: patientImage }} style={styles.profileImage} />
-        <View style={styles.nameStatusContainer}>
-          <Text style={styles.patientName}>{patientName}</Text>
-        </View>
-        <View style={styles.headerIcons}>
-          <TouchableOpacity onPress={() => setModalVisible(true)}>
-            <Ionicons name="medkit" size={20} color="#3e663e" />
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      <FlatList
-        data={messages}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderItem}
-        style={{ flex: 1 }}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 16 }}
+      <DoctorChatHeader
+        image={patientImage}
+        patientName={patientName}
+        onViewPrescription={() => setViewModalVisible(true)}
+        onAddPrescription={() => setAddModalVisible(true)}
       />
 
-      <View style={styles.inputContainer}>
-        <TouchableOpacity onPress={pickImage}>
-          <Entypo name="image" size={24} color="#3e663e" />
-        </TouchableOpacity>
-        <TextInput
-          style={styles.textInput}
-          placeholder="Write your message"
-          value={text}
-          onChangeText={setText}
-        />
-        <TouchableOpacity onPress={handleSend}>
-          <Ionicons name="send" size={24} color="#3e663e" />
-        </TouchableOpacity>
-      </View>
+      <DoctorMessageList messages={messages} />
+
+      <DoctorMessageInputBar
+        text={text}
+        onTextChange={setText}
+        onSend={handleSend}
+      />
+
       <PrescriptionModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
+        visible={viewModalVisible}
+        onClose={() => setViewModalVisible(false)}
         prescriptions={prescriptions}
         noteText="Take with food and drink plenty of water."
+        isViewOnly={true}
+      />
+
+      <PrescriptionModal
+        visible={addModalVisible}
+        onClose={() => setAddModalVisible(false)}
+        prescriptions={prescriptions}
+        noteText="Take with food and drink plenty of water."
+        isViewOnly={false}
       />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: "#fff",
-    paddingTop: 20 , 
-    paddingBottom: 20
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 12,
-    borderBottomWidth: 0.5,
-    borderBottomColor: "#ccc",
-  },
-  nameStatusContainer: {
-    flexDirection: "column",
-    justifyContent: "center",
-  },
-   
-  patientName: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#2d2d2d",
-    marginBottom: 2,
-  },
-  profileImage: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    marginRight: 12,
-  },
-  headerIcons: {
-    marginLeft: "auto",
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  bubble: {
-    padding: 10,
-    borderRadius: 10,
-    marginVertical: 4,
-    maxWidth: "80%",
-  },
-  patientBubble: {
-    backgroundColor: "#e5e5e5",
-    alignSelf: "flex-end",
-  },
-  doctorBubble: {
-    backgroundColor: "#3e663e",
-    alignSelf: "flex-start",
-  },
-  msgText: {
-    color: "#fff",
-    fontSize: 14,
-  },
-  msgImage: {
-    width: 160,
-    height: 160,
-    borderRadius: 10,
-    marginBottom: 6,
-  },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 10,
-    borderTopWidth: 0.5,
-    borderColor: "#ccc",
-  },
-  textInput: {
+  container: {
     flex: 1,
-    backgroundColor: "#f0f0f0",
-    borderRadius: 20,
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    marginHorizontal: 10,
+    backgroundColor: "#fff",
+    paddingTop: 20,
+    paddingBottom: 20,
   },
 });
