@@ -9,7 +9,11 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app requires access to the camera to capture images for analysis.",
+        "NSPhotoLibraryUsageDescription": "This app requires access to your photo library to select images for analysis."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -27,11 +31,20 @@
     },
     "web": {
       "bundler": "metro",
-      "output": "static",
+      "output": "server",
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router",
+      
+      ["expo-router",{
+        "origin": "https://skinsage.expo.app"
+      }],
+      [
+        "@stripe/stripe-react-native",
+        {
+          "publishableKey": "pk_test_51QlypH4WlaAkxmVUvpKepokW0SXFbSX8O7i9dpyTXNlgsNQdiUhVO7n2hkDm92quOADz4TH7fycLdF3EvhBnY2Ol00Xw0PfZ46"
+        }
+      ],
       [
         "expo-splash-screen",
         {

@@ -1,67 +1,14 @@
 import axios from "axios";
 import * as ImageManipulator from "expo-image-manipulator";
 
-// Hugging Face token
-const HF_TOKEN = "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";
-
 // Create an axios instance pointed at your FastAPI /predict endpoint
 export const api = axios.create({
   baseURL: process.env.EXPO_PUBLIC_API_URL,
   timeout: 10000,
   headers: {
-    'Authorization': `Bearer ${HF_TOKEN}`,
-    'Content-Type': 'application/json',
-  }
+    Authorization: process.env.EXPO_PUBLIC_HF_TOKEN,
+  },
 });
-
-// Add request interceptor for debugging
-api.interceptors.request.use(
-  (config) => {
-    console.log('API Request:', {
-      url: config.url,
-      method: config.method,
-      headers: {
-        ...config.headers,
-        'Authorization': 'Bearer [REDACTED]' // Hide token in logs
-      },
-      data: config.data
-    });
-    return config;
-  },
-  (error) => {
-    console.error('API Request Error:', error);
-    return Promise.reject(error);
-  }
-);
-
-// Add response interceptor for debugging
-api.interceptors.response.use(
-  (response) => {
-    console.log('API Response:', {
-      status: response.status,
-      data: response.data,
-      headers: response.headers
-    });
-    return response;
-  },
-  (error) => {
-    console.error('API Response Error:', {
-      status: error.response?.status,
-      data: error.response?.data,
-      message: error.message
-    });
-    return Promise.reject(error);
-  }
-);
-
-// Function to set auth token
-export const setAuthToken = (token: string) => {
-  if (token) {
-    api.defaults.headers.common['Authorization'] = `Bearer ${HF_TOKEN}`;
-  } else {
-    api.defaults.headers.common['Authorization'] = `Bearer ${HF_TOKEN}`;
-  }
-};
 
 /**
  * Convert any image (PNG, HEIC, etc.) to JPEG using Expo ImageManipulator
@@ -89,12 +36,13 @@ export async function predictImage(uri: string): Promise<any> {
     type: "image/jpeg",
   } as any);
 
+  
   const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/predict`, {
     method: "POST",
     headers: {
-      'Authorization': `Bearer ${HF_TOKEN}`,
+      Authorization: process.env.EXPO_PUBLIC_HF_TOKEN,
       "Content-Type": "multipart/form-data",
-    } as any,
+    },
     body: formData,
   });
 

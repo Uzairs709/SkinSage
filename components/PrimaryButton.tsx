@@ -1,17 +1,18 @@
 // components/PrimaryButton.tsx
-import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, StyleProp, TextStyle, ViewStyle } from 'react-native';
 import { useFonts } from 'expo-font';
+import React from 'react';
+import { DimensionValue, StyleProp, StyleSheet, Text, TextStyle, TouchableOpacity, ViewStyle } from 'react-native';
 
 interface PrimaryButtonProps {
   label: string; // The label is a string
   onPress: () => void; // onPress is a function that takes no arguments and returns nothing
-  width?: string | number; // Optional width for the button (can be a percentage or a number in pixels)
+  width?: DimensionValue; // Optional width for the button (can be a percentage or a number in pixels)
   style?: StyleProp<ViewStyle>; // Custom styles for the button container
   textStyle?: StyleProp<TextStyle>; // Custom styles for the button text
+  disabled?: boolean;
 }
 
-const PrimaryButton: React.FC<PrimaryButtonProps> = ({ label, onPress, width, style, textStyle }) => {
+const PrimaryButton: React.FC<PrimaryButtonProps> = ({ label, onPress, width, style, textStyle, disabled }) => {
   let [fontsLoaded] = useFonts({
     'Epilogue': require('../assets/fonts/Epilogue-VariableFont_wght.ttf'), // Load your custom font
   });
@@ -22,8 +23,14 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({ label, onPress, width, st
 
   return (
     <TouchableOpacity 
-      style={[styles.button, { width: width || 'auto' }, style]} 
+      style={[
+        styles.button, 
+        width ? { width } : {}, 
+        disabled && styles.disabledButton,
+        style
+      ]} 
       onPress={onPress}
+      disabled={disabled}
     >
       <Text style={[styles.buttonText, textStyle]}>{label}</Text>
     </TouchableOpacity>
@@ -40,6 +47,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginTop: 40,
     marginBottom: 20,
+  },
+  disabledButton: {
+    backgroundColor: '#CCCCCC',
   },
   buttonText: {
     fontSize: 20,
