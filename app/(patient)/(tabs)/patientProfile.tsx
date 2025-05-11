@@ -20,7 +20,10 @@ const Profile = () => {
         const storedUser = await AsyncStorage.getItem("user");
         if (storedUser) {
           const parsedUser = JSON.parse(storedUser);
+          // Ensure age is a string
+          parsedUser.age = String(parsedUser.age);
           setUser(parsedUser);
+          console.log("User loaded from storage: ", parsedUser.age);
         }
       } catch (error) {
         console.error("Failed to load user from storage:", error);
@@ -43,7 +46,12 @@ const Profile = () => {
                 <InfoField label="Gender" value={user.gender} labelWidth={55} />
               </View>
               <View style={styles.rightAligned}>
-                <InfoField label="Age" value={user.age} labelWidth={40} />
+                <InfoField 
+                  label="Age" 
+                  value={user.age} 
+                  labelWidth={40}
+                  editable={false}
+                />
               </View>
             </View>
           </>
