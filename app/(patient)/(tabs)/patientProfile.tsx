@@ -23,7 +23,6 @@ const Profile = () => {
           // Ensure age is a string
           parsedUser.age = String(parsedUser.age);
           setUser(parsedUser);
-          console.log("User loaded from storage: ", parsedUser.age);
         }
       } catch (error) {
         console.error("Failed to load user from storage:", error);

@@ -16,7 +16,7 @@ export default function splash () {
     try{
     router.replace("/login");
     }catch(e){
-      console.log("error while login")
+      console.error("error while login")
     }
     finally{
       

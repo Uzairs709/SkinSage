@@ -41,14 +41,11 @@ export default function LoginScreen() {
         return;
       }
 
-      console.log("Starting login process for email:", email);
       await login(email, password);
       const userString = await AsyncStorage.getItem("user");
-      console.log("Retrieved user data from storage:", userString);
       
       if (userString) {
         const user = JSON.parse(userString);
-        console.log("Parsed user data:", JSON.stringify(user, null, 2));
         
         if (!user.user_type) {
           console.error("User type is missing from user data");
@@ -57,10 +54,8 @@ export default function LoginScreen() {
         }
 
         if (user.user_type === "doctor") {
-          console.log("Navigating to doctor dashboard");
           router.replace("/(doctor)/(tabs)/doctor_dashboard");
         } else if (user.user_type === "patient") {
-          console.log("Navigating to patient home");
           router.replace("/(patient)/(tabs)/home");
         } else {
           console.error("Invalid user type:", user.user_type);

@@ -40,9 +40,9 @@ export async function predictImage(uri: string): Promise<any> {
   const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/predict`, {
     method: "POST",
     headers: {
-      Authorization: process.env.EXPO_PUBLIC_HF_TOKEN,
+      Authorization: process.env.EXPO_PUBLIC_HF_TOKEN ? `Bearer ${process.env.EXPO_PUBLIC_HF_TOKEN}` : undefined,
       "Content-Type": "multipart/form-data",
-    },
+    } as HeadersInit,
     body: formData,
   });
 
@@ -51,6 +51,23 @@ export async function predictImage(uri: string): Promise<any> {
   }
 
   return response.json();
+}
+
+export interface Conversation {
+  id: number;
+  name: string;
+  lastMessage: string;
+  imageUrl: string;
+}
+
+export async function getPatientConversations(patientId: string): Promise<Conversation[]> {
+  const response = await api.get(`/patients/${patientId}/conversations`);
+  return response.data;
+}
+
+export async function getDoctorConversations(docId: string): Promise<Conversation[]> {
+  const response = await api.get(`/doctors/${docId}/conversations`);
+  return response.data;
 }
 
 export default api;

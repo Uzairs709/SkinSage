@@ -41,7 +41,7 @@ const CheckoutForm = forwardRef<CheckoutFormRef, { amount: number }>(({ amount }
             });
 
             if (initError) {
-                console.log("Payment sheet initialization error", initError);
+                console.error("Payment sheet initialization error", initError);
                 return false;
             }
 
@@ -49,12 +49,11 @@ const CheckoutForm = forwardRef<CheckoutFormRef, { amount: number }>(({ amount }
             
             // Handle payment sheet dismissal
             if (presentError?.code === 'Canceled') {
-                console.log("Payment sheet was dismissed");
                 return false;
             }
             
             if (presentError) {
-                console.log("Payment sheet presentation error", presentError);
+                console.error("Payment sheet presentation error", presentError);
                 return false;
             }
 

@@ -68,7 +68,6 @@ export default function doctor_dashboard() {
       try {
         setLoading(true);
         const userString = await AsyncStorage.getItem("user");
-        console.log("USER: " + userString);
         if (!userString) throw new Error("No user in storage");
         const user = JSON.parse(userString);
         const doctorId = user.id;
@@ -76,7 +75,6 @@ export default function doctor_dashboard() {
 
   
         const res = await api.get(`/doctors/${doctorId}/followups`);
-        console.log("Appointments:", res.data);
   
         const data: FollowUp[] = res.data;
         setAppointments(data);

@@ -7,9 +7,11 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 type Doctor = {
   id: number;
   name: string;
-  profileType: string;
-  imageUrl: string;
-  profileDetails: string;
+  license_number: string;
+  doc_designation: string | null;
+  doc_specialization: string | null;
+  popularity: number;
+  imageUrl?: string | null;
 };
 
 interface Props {
@@ -22,7 +24,12 @@ interface Props {
 export const DoctorCard = ({ doctor, expanded, toggleProfile, onChat }: Props) => (
   <View style={styles.doctorContainer}>
     <View style={styles.row}>
-      <Image source={{ uri: doctor.imageUrl }} style={styles.avatar} />
+      <Image 
+        source={{ 
+          uri: doctor.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(doctor.name)}` 
+        }} 
+        style={styles.avatar} 
+      />
       <View style={{ flex: 1 }}>
         <View style={styles.rowBetween}>
           <Text style={styles.doctorName}>{doctor.name}</Text>
@@ -30,15 +37,19 @@ export const DoctorCard = ({ doctor, expanded, toggleProfile, onChat }: Props) =
             <Ionicons name="chatbubble-outline" size={24} color={Colors.dark.primary} />
           </TouchableOpacity>
         </View>
-        <Text style={styles.profileType}>{doctor.profileType}</Text>
+        <Text style={styles.profileType}>
+          {doctor.doc_designation || "General Practitioner"}
+        </Text>
         <TouchableOpacity onPress={() => toggleProfile(doctor.id)}>
           <Text style={styles.medicalProfileText}>Medical Profile &gt;</Text>
         </TouchableOpacity>
       </View>
     </View>
-    {expanded && (
+    {expanded && doctor.doc_specialization && (
       <View style={styles.profileBox}>
-        <Text style={styles.profileText}>{doctor.profileDetails}</Text>
+        <Text style={styles.profileText}>
+          {doctor.doc_specialization}
+        </Text>
       </View>
     )}
   </View>

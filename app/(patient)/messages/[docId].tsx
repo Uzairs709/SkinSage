@@ -84,8 +84,8 @@ export default function Messages() {
     return (
         <SafeAreaView style={styles.container}>
             <ChatHeader
-                image={image}
-                patientName={name}
+                imageUrl={image}
+                docName={name}
                 onPressPrescription={() => setModalVisible(true)}
             />
 

@@ -52,7 +52,6 @@ export default function Signup() {
 
     try {
       const response = await api.post("/signup", payload);
-      console.log("Signup successful", response.data);
 
       // Redirect based on role
       if (selectedRole === "Doctor") {
