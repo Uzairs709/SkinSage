@@ -22,15 +22,12 @@ const RootLayout = () => {
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen
             name="(auth)"
-            // options={{ headerShown: false }}
           />
           <Stack.Screen
             name="(doctor)"
-            // options={{ headerShown: false }}
           />
           <Stack.Screen
             name="(patient)"
-            // options={{ headerShown: false }}
           />
         </Stack>
       </AuthProvider>

@@ -77,10 +77,14 @@ export default function Home() {
     setExpandedProfiles((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const handleChat = (docId: number, docName: string) => {
+  const handleChat = (docId: number, docName: string, imageUri?: string) => {
     router.push({
       pathname: `/(patient)/messages/[docId]`,
-      params: { docId: docId.toString(), name: docName },
+      params: { 
+        docId: docId.toString(), 
+        name: docName,
+        imageUri: imageUri || '' 
+      },
     });
   };
 

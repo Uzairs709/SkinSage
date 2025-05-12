@@ -70,4 +70,46 @@ export async function getDoctorConversations(docId: string): Promise<Conversatio
   return response.data;
 }
 
+export interface Message {
+  id: number;
+  sender: "patient" | "doctor";
+  text?: string;
+  image_ai_generated?: boolean;
+  ai_analysis?: string;
+}
+
+export interface SendMessageRequest {
+  patient_id: number;
+  doctor_id: number;
+  sender_id: number;
+  content: string;
+}
+
+export interface SendMessageResponse {
+  conversation_id: number;
+  message_id: number;
+  sent_at: string;
+}
+
+export async function sendMessage(payload: SendMessageRequest): Promise<SendMessageResponse> {
+  const response = await api.post('/chat/send', payload);
+  return response.data;
+}
+
+export interface ChatMessage {
+  id: number;
+  conversation_id: number;
+  sender_id: number;
+  receiver_id: number;
+  content: string;
+  sent_at: string;
+  is_ai_generated: boolean;
+  is_image: boolean;
+}
+
+export async function getChatHistory(patientId: number, doctorId: number): Promise<ChatMessage[]> {
+  const response = await api.get(`/chat/history?patient_id=${patientId}&doctor_id=${doctorId}`);
+  return response.data;
+}
+
 export default api;

@@ -1,21 +1,13 @@
-import * as ImagePicker from "expo-image-picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalSearchParams } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FlatList, SafeAreaView, StyleSheet } from "react-native";
 
 import ChatHeader from "@/components/chatHeader";
 import MessageBubble from "@/components/MessageBubble";
 import InputBar from "@/components/MessageInputBar";
 import PrescriptionModal from "@/components/PrescriptionModal";
-
-type Message = {
-    id: number;
-    sender: "patient" | "doctor";
-    text?: string;
-    image?: string;
-    image_ai_generated?: boolean;
-    ai_analysis?: string;
-};
+import { getChatHistory, Message, sendMessage } from "@/utils/api";
 
 export default function Messages() {
     const { docId, name, image } = useLocalSearchParams<{
@@ -28,56 +20,76 @@ export default function Messages() {
 
     const [messages, setMessages] = useState<Message[]>([]);
     const [text, setText] = useState("");
-    const [pickedImage, setPickedImage] = useState<string | null>(null);
     const [prescriptions] = useState([
         { medication: "Hydrocortisone cream", quantity: "1 tube" },
         { medication: "Antihistamine", quantity: "30 tablets" },
     ]);
     const noteText = "Take with food and drink plenty of water.";
 
+    useEffect(() => {
+        const fetchChatHistory = async () => {
+            try {
+                const userData = await AsyncStorage.getItem("user");
+                if (!userData) {
+                    console.error("User not found");
+                    return;
+                }
 
-    const handleSend = () => {
-        if (!text && !pickedImage) return;
+                const user = JSON.parse(userData);
+                const history = await getChatHistory(user.id, parseInt(docId));
+                
+                // Convert ChatMessage[] to Message[]
+                const formattedMessages: Message[] = history.map(msg => ({
+                    id: msg.id,
+                    sender: msg.sender_id === user.id ? "patient" : "doctor",
+                    text: msg.content,
+                    image_ai_generated: msg.is_ai_generated,
+                }));
 
-        const newMsg: Message = {
-            id: Date.now(),
-            sender: userType,
-            text,
-            image: pickedImage ?? undefined,
+                setMessages(formattedMessages);
+            } catch (error) {
+                console.error("Failed to fetch chat history:", error);
+            }
         };
 
-        setMessages((prev) => [...prev, newMsg]);
-        setText("");
-        setPickedImage(null);
+        // Initial fetch
+        fetchChatHistory();
+        
+        // Set up polling
+        const intervalId = setInterval(fetchChatHistory, 3000);
 
-        if (userType === "patient" && pickedImage) {
-            setTimeout(() => {
-                setMessages((prev) => [
-                    ...prev,
-                    {
-                        id: Date.now() + 1,
-                        sender: "doctor",
-                        image_ai_generated: true,
-                        ai_analysis: "AI Analysis:\n1. Warts 70%\n2. Acne 20%\n3. Eczema 10%",
-                    },
-                    {
-                        id: Date.now() + 2,
-                        sender: "doctor",
-                        text: "Based on the image, I've prescribed medicines. Please check your profile.",
-                    },
-                ]);
-            }, 1000);
-        }
-    };
+        // Cleanup
+        return () => clearInterval(intervalId);
+    }, [docId]);
 
-    const pickImage = async () => {
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            quality: 1,
-        });
+    const handleSend = async () => {
+        if (!text) return;
 
-        if (!result.canceled && result.assets.length > 0) {
-            setPickedImage(result.assets[0].uri);
+        try {
+            const userData = await AsyncStorage.getItem("user");
+            if (!userData) {
+                console.error("User not found");
+                return;
+            }
+
+            const user = JSON.parse(userData);
+            const response = await sendMessage({
+                patient_id: user.id,
+                doctor_id: parseInt(docId),
+                sender_id: user.id,
+                content: text
+            });
+
+            const newMsg: Message = {
+                id: response.message_id,
+                sender: userType,
+                text,
+            };
+
+            setMessages((prev) => [...prev, newMsg]);
+            setText("");
+        } catch (error) {
+            console.error("Failed to send message:", error);
         }
     };
 
@@ -103,7 +115,7 @@ export default function Messages() {
                 text={text}
                 onTextChange={setText}
                 onSend={handleSend}
-                onPickImage={pickImage}
+                onPickImage={() => {}}
             />
 
             <PrescriptionModal
@@ -123,3 +135,4 @@ const styles = StyleSheet.create({
         paddingTop: 23,
     },
 });
+

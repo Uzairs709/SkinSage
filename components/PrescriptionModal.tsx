@@ -30,7 +30,7 @@ export default function PrescriptionModal({
   onClose,
   prescriptions: initialPrescriptions,
   noteText: initialNoteText,
-  isViewOnly = false,
+  isViewOnly = true,
 }: PrescriptionModalProps) {
   const [prescriptions, setPrescriptions] = useState(initialPrescriptions);
   const [noteText, setNoteText] = useState(initialNoteText);
