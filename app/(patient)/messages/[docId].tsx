@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalSearchParams } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FlatList, SafeAreaView, StyleSheet } from "react-native";
 
 import ChatHeader from "@/components/chatHeader";
@@ -25,6 +25,8 @@ export default function Messages() {
         { medication: "Antihistamine", quantity: "30 tablets" },
     ]);
     const noteText = "Take with food and drink plenty of water.";
+
+    const flatListRef = useRef<FlatList>(null);
 
     useEffect(() => {
         const fetchChatHistory = async () => {
@@ -66,6 +68,8 @@ export default function Messages() {
         if (!text) return;
 
         try {
+            const textTOsend=text;
+            setText("");
             const userData = await AsyncStorage.getItem("user");
             if (!userData) {
                 console.error("User not found");
@@ -77,19 +81,24 @@ export default function Messages() {
                 patient_id: user.id,
                 doctor_id: parseInt(docId),
                 sender_id: user.id,
-                content: text
+                content: textTOsend
             });
 
             const newMsg: Message = {
                 id: response.message_id,
                 sender: userType,
-                text,
+                text: textTOsend,
             };
 
             setMessages((prev) => [...prev, newMsg]);
-            setText("");
         } catch (error) {
             console.error("Failed to send message:", error);
+        }
+    };
+
+    const scrollToBottom = () => {
+        if (flatListRef.current) {
+            flatListRef.current.scrollToEnd({ animated: true });
         }
     };
 
@@ -102,6 +111,7 @@ export default function Messages() {
             />
 
             <FlatList
+                ref={flatListRef}
                 data={messages}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => (
@@ -109,6 +119,8 @@ export default function Messages() {
                 )}
                 style={{ flex: 1 }}
                 contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 16 }}
+                onContentSizeChange={scrollToBottom}
+                onLayout={scrollToBottom}
             />
 
             <InputBar

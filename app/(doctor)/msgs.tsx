@@ -2,15 +2,16 @@
 
 import DoctorChatHeader from "@/components/DoctorChatHeader";
 import DoctorMessageInputBar from "@/components/DoctorMessageInputBar";
-import DoctorMessageList from "@/components/DoctorMessageList";
+import MessageBubble from "@/components/MessageBubble";
 import PrescriptionModal from "@/components/PrescriptionModal";
 import { getChatHistory, Message, sendMessage } from "@/utils/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalSearchParams } from "expo-router";
-import React, { useEffect, useState } from "react";
-import { SafeAreaView, StyleSheet } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { FlatList, SafeAreaView, StyleSheet } from "react-native";
 
 export default function Messages() {
+  const flatListRef = useRef<FlatList>(null);
   const { patientId, patientName, patientImage } = useLocalSearchParams<{
     patientId: string;
     patientName: string;
@@ -65,6 +66,8 @@ export default function Messages() {
     if (!text) return;
 
     try {
+      const textTOsend=text;
+      setText("");
       const userData = await AsyncStorage.getItem("user");
       if (!userData) {
         console.error("User not found");
@@ -76,19 +79,24 @@ export default function Messages() {
         patient_id: parseInt(patientId),
         doctor_id: user.id,
         sender_id: user.id,
-        content: text
+        content: textTOsend
       });
 
       const newMsg: Message = {
         id: response.message_id,
         sender: "doctor",
-        text,
+        text:textTOsend,
       };
 
       setMessages((prev) => [...prev, newMsg]);
-      setText("");
     } catch (error) {
       console.error("Failed to send message:", error);
+    }
+  };
+
+  const scrollToBottom = () => {
+    if (flatListRef.current) {
+      flatListRef.current.scrollToEnd({ animated: true });
     }
   };
 
@@ -101,7 +109,18 @@ export default function Messages() {
         onAddPrescription={() => setAddModalVisible(true)}
       />
 
-      <DoctorMessageList messages={messages} />
+      <FlatList
+        ref={flatListRef}
+        data={messages}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <MessageBubble message={item} userType="doctor" />
+        )}
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 16 }}
+        onContentSizeChange={scrollToBottom}
+        onLayout={scrollToBottom}
+      />
 
       <DoctorMessageInputBar
         text={text}
