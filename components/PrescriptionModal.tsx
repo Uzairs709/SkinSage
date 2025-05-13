@@ -1,14 +1,8 @@
 import { Colors } from "@/constants/Colors";
+import axios from "@/utils/api";
 import { BlurView } from "expo-blur";
-import React, { useState } from "react";
-import {
-  Modal,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
-} from "react-native";
+import React, { useEffect, useState } from "react";
+import { Modal, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import PrescriptionMedicationList from "./PrescriptionMedicationList";
 import PrescriptionNote from "./PrescriptionNote";
 
@@ -23,6 +17,8 @@ interface PrescriptionModalProps {
   prescriptions: Prescription[];
   noteText: string;
   isViewOnly?: boolean;
+  doctorId: number | null;
+  patientId: number;
 }
 
 export default function PrescriptionModal({
@@ -31,33 +27,51 @@ export default function PrescriptionModal({
   prescriptions: initialPrescriptions,
   noteText: initialNoteText,
   isViewOnly = true,
+  doctorId,
+  patientId,
 }: PrescriptionModalProps) {
-  const [prescriptions, setPrescriptions] = useState(initialPrescriptions);
-  const [noteText, setNoteText] = useState(initialNoteText);
+  const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
+  const [noteText, setNoteText] = useState("");
+
+  // Sync into state only once when the modal actually opens
+  useEffect(() => {
+    if (visible) {
+      setPrescriptions(initialPrescriptions ?? []);
+      setNoteText(initialNoteText ?? "");
+    }
+  }, [visible]);
+
   const [isEditing, setIsEditing] = useState(false);
 
-  const handleSave = () => {
-    // TODO: Implement save functionality
-    setIsEditing(false);
+  const handleSave = async () => {
+    if (!doctorId) return;
+    try {
+      await axios.put("/prescriptions", {
+        doctor_id: doctorId,
+        patient_id: patientId,
+        medication: prescriptions,
+        instructions: noteText,
+      });
+      setIsEditing(false);
+      onClose();
+    } catch (err) {
+      console.error("Error saving prescription:", err);
+    }
   };
 
   const addNewMedication = () => {
-    setPrescriptions([
-      ...prescriptions,
-      { medication: "", quantity: "" }
-    ]);
+    setPrescriptions([...prescriptions, { medication: "", quantity: "" }]);
   };
 
   const removeMedication = (index: number) => {
-    const newPrescriptions = prescriptions.filter((_, idx) => idx !== index);
-    setPrescriptions(newPrescriptions);
+    setPrescriptions(prescriptions.filter((_, i) => i !== index));
   };
 
   return (
     <Modal visible={visible} transparent animationType="slide">
       <TouchableWithoutFeedback onPress={onClose}>
         <BlurView intensity={50} tint="dark" style={styles.overlay}>
-          <TouchableWithoutFeedback onPress={() => { }}>
+          <TouchableWithoutFeedback onPress={() => {}}>
             <View style={styles.modalContainer}>
               <TouchableOpacity style={styles.circle} onPress={onClose}>
                 <Text style={styles.closeText}>×</Text>
@@ -66,8 +80,8 @@ export default function PrescriptionModal({
               <View style={styles.titleContainer}>
                 <Text style={styles.title}>Prescription</Text>
                 {!isViewOnly && (
-                  <TouchableOpacity 
-                    style={styles.editButton} 
+                  <TouchableOpacity
+                    style={styles.editButton}
                     onPress={() => setIsEditing(!isEditing)}
                   >
                     <Text style={styles.editButtonText}>
