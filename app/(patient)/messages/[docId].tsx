@@ -1,21 +1,13 @@
-import * as ImagePicker from "expo-image-picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalSearchParams } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FlatList, SafeAreaView, StyleSheet } from "react-native";
 
 import ChatHeader from "@/components/chatHeader";
+import DoctorInputBar from "@/components/DoctorMessageInputBar";
 import MessageBubble from "@/components/MessageBubble";
-import InputBar from "@/components/MessageInputBar";
 import PrescriptionModal from "@/components/PrescriptionModal";
-
-type Message = {
-    id: number;
-    sender: "patient" | "doctor";
-    text?: string;
-    image?: string;
-    image_ai_generated?: boolean;
-    ai_analysis?: string;
-};
+import { getChatHistory, Message, sendMessage } from "@/utils/api";
 
 export default function Messages() {
     const { docId, name, image } = useLocalSearchParams<{
@@ -28,68 +20,129 @@ export default function Messages() {
 
     const [messages, setMessages] = useState<Message[]>([]);
     const [text, setText] = useState("");
-    const [pickedImage, setPickedImage] = useState<string | null>(null);
     const [prescriptions] = useState([
         { medication: "Hydrocortisone cream", quantity: "1 tube" },
         { medication: "Antihistamine", quantity: "30 tablets" },
     ]);
     const noteText = "Take with food and drink plenty of water.";
 
+    const flatListRef = useRef<FlatList>(null);
 
-    const handleSend = () => {
-        if (!text && !pickedImage) return;
+    useEffect(() => {
+        const fetchChatHistory = async () => {
+            try {
+                const userData = await AsyncStorage.getItem("user");
+                if (!userData) {
+                    console.error("User not found");
+                    return;
+                }
 
-        const newMsg: Message = {
-            id: Date.now(),
-            sender: userType,
-            text,
-            image: pickedImage ?? undefined,
+                const user = JSON.parse(userData);
+                const history = await getChatHistory(user.id, parseInt(docId));
+
+                // Convert ChatMessage[] to Message[]
+                const formattedMessages: Message[] = history.map(msg => ({
+                    id: msg.id,
+                    sender: msg.sender_id === user.id ? "patient" : "doctor",
+                    content: msg.content,
+                    isImage: msg.is_image,
+                    isAI: msg.is_ai_generated,
+                }));
+
+                setMessages(formattedMessages);
+            } catch (error) {
+                console.error("Failed to fetch chat history:", error);
+            }
         };
 
-        setMessages((prev) => [...prev, newMsg]);
-        setText("");
-        setPickedImage(null);
+        // Initial fetch
+        fetchChatHistory();
 
-        if (userType === "patient" && pickedImage) {
-            setTimeout(() => {
-                setMessages((prev) => [
-                    ...prev,
-                    {
-                        id: Date.now() + 1,
-                        sender: "doctor",
-                        image_ai_generated: true,
-                        ai_analysis: "AI Analysis:\n1. Warts 70%\n2. Acne 20%\n3. Eczema 10%",
-                    },
-                    {
-                        id: Date.now() + 2,
-                        sender: "doctor",
-                        text: "Based on the image, I've prescribed medicines. Please check your profile.",
-                    },
-                ]);
-            }, 1000);
+        // Set up polling
+        const intervalId = setInterval(fetchChatHistory, 2000);
+
+        // Cleanup
+        return () => clearInterval(intervalId);
+    }, [docId]);
+
+    const handleSend = async () => {
+        if (!text) return;
+
+        try {
+            const textTOsend = text;
+            setText("");
+            const userData = await AsyncStorage.getItem("user");
+            if (!userData) {
+                console.error("User not found");
+                return;
+            }
+
+            const user = JSON.parse(userData);
+            const response = await sendMessage({
+                patient_id: user.id,
+                doctor_id: parseInt(docId),
+                sender_id: user.id,
+                content: textTOsend
+            });
+
+            const newMsg: Message = {
+                id: response.message_id,
+                sender: userType,
+                text: textTOsend,
+            };
+
+            setMessages((prev) => [...prev, newMsg]);
+        } catch (error) {
+            console.error("Failed to send message:", error);
         }
     };
 
-    const pickImage = async () => {
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            quality: 1,
-        });
+    const handleImagePick = async (imageUri: string) => {
+        try {
+            const userData = await AsyncStorage.getItem("user");
+            if (!userData) {
+                console.error("User not found");
+                return;
+            }
 
-        if (!result.canceled && result.assets.length > 0) {
-            setPickedImage(result.assets[0].uri);
+            const user = JSON.parse(userData);
+            const response = await sendMessage({
+                patient_id: user.id,
+                doctor_id: parseInt(docId),
+                sender_id: user.id,
+                content: imageUri,
+                is_image: true
+            });
+
+            const newMsg: Message = {
+                id: response.message_id,
+                sender: userType,
+                imageUri: imageUri,
+                is_image: true
+            };
+
+            setMessages((prev) => [...prev, newMsg]);
+        } catch (error) {
+            console.error("Failed to send image:", error);
+        }
+    };
+
+    const scrollToBottom = () => {
+        if (flatListRef.current) {
+            flatListRef.current.scrollToEnd({ animated: true });
         }
     };
 
     return (
         <SafeAreaView style={styles.container}>
             <ChatHeader
-                image={image}
-                patientName={name}
+                imageUrl={image}
+                docName={name}
                 onPressPrescription={() => setModalVisible(true)}
             />
 
             <FlatList
+                ref={flatListRef}
                 data={messages}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => (
@@ -97,13 +150,15 @@ export default function Messages() {
                 )}
                 style={{ flex: 1 }}
                 contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 16 }}
+                onContentSizeChange={scrollToBottom}
+                onLayout={scrollToBottom}
             />
 
-            <InputBar
+            <DoctorInputBar
                 text={text}
                 onTextChange={setText}
                 onSend={handleSend}
-                onPickImage={pickImage}
+                onPickImage={handleImagePick}
             />
 
             <PrescriptionModal
@@ -123,3 +178,4 @@ const styles = StyleSheet.create({
         paddingTop: 23,
     },
 });
+

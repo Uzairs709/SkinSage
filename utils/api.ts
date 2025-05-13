@@ -40,9 +40,9 @@ export async function predictImage(uri: string): Promise<any> {
   const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/predict`, {
     method: "POST",
     headers: {
-      Authorization: process.env.EXPO_PUBLIC_HF_TOKEN,
+      Authorization: process.env.EXPO_PUBLIC_HF_TOKEN ? `Bearer ${process.env.EXPO_PUBLIC_HF_TOKEN}` : undefined,
       "Content-Type": "multipart/form-data",
-    },
+    } as HeadersInit,
     body: formData,
   });
 
@@ -51,6 +51,68 @@ export async function predictImage(uri: string): Promise<any> {
   }
 
   return response.json();
+}
+
+export interface Conversation {
+  id: number;
+  name: string;
+  lastMessage: string;
+  imageUrl: string;
+}
+
+export async function getPatientConversations(patientId: string): Promise<Conversation[]> {
+  const response = await api.get(`/patients/${patientId}/conversations`);
+  return response.data;
+}
+
+export async function getDoctorConversations(docId: string): Promise<Conversation[]> {
+  const response = await api.get(`/doctors/${docId}/conversations`);
+  return response.data;
+}
+
+export interface Message {
+  id: number;
+  sender: "patient" | "doctor";
+  text?: string;
+  imageUri?: string;
+  is_image?: boolean;
+  image_ai_generated?: boolean;
+  ai_analysis?: string;
+}
+
+export interface SendMessageRequest {
+  patient_id: number;
+  doctor_id: number;
+  sender_id: number;
+  content: string;
+  is_image?: boolean;
+}
+
+export interface SendMessageResponse {
+  conversation_id: number;
+  message_id: number;
+  sent_at: string;
+}
+
+export async function sendMessage(payload: SendMessageRequest): Promise<SendMessageResponse> {
+  const response = await api.post('/chat/send', payload);
+  return response.data;
+}
+
+export interface ChatMessage {
+  id: number;
+  conversation_id: number;
+  sender_id: number;
+  receiver_id: number;
+  content: string;
+  sent_at: string;
+  is_ai_generated: boolean;
+  is_image: boolean;
+}
+
+export async function getChatHistory(patientId: number, doctorId: number): Promise<ChatMessage[]> {
+  const response = await api.get(`/chat/history?patient_id=${patientId}&doctor_id=${doctorId}`);
+  return response.data;
 }
 
 export default api;

@@ -47,13 +47,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setUser(resp.data);
       await AsyncStorage.setItem("user", JSON.stringify(resp.data));
     } catch (err) {
-      console.error("Failed to fetch current user:", err);
-      // Optionally: if 401, force logout()
+      
     }
   };
 
   const login = async (email: string, password: string) => {
-    console.log("Starting login process for email inside login function:", email);
     setLoading(true);
     await AsyncStorage.removeItem("user");
     await AsyncStorage.removeItem("access_token");
@@ -65,7 +63,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         access_token: string;
         token_type: string;
       }>("/token", { email, password });
-      console.log("Token response:", tokenResp);
       // 2) persist token
       setToken(tokenResp.access_token);
       await AsyncStorage.setItem("access_token", tokenResp.access_token);

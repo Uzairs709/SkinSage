@@ -68,16 +68,12 @@ export default function doctor_dashboard() {
       try {
         setLoading(true);
         const userString = await AsyncStorage.getItem("user");
-        console.log("USER: " + userString);
         if (!userString) throw new Error("No user in storage");
         const user = JSON.parse(userString);
         const doctorId = user.id;
         setDoctorName(user.name || "Doctor"); // Set doctor name for profile
 
-  
         const res = await api.get(`/doctors/${doctorId}/followups`);
-        console.log("Appointments:", res.data);
-  
         const data: FollowUp[] = res.data;
         setAppointments(data);
       } catch (err: any) {

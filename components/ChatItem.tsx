@@ -2,10 +2,10 @@ import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 interface ChatUser {
-  id: string;
+  id: string | number;
   name: string;
   lastMessage: string;
-  avatarUrl?: string;
+  imageUrl?: string;
 }
 
 export default function ChatItem({
@@ -17,7 +17,12 @@ export default function ChatItem({
 }) {
   return (
     <TouchableOpacity style={styles.chatItem} onPress={onPress}>
-      <Image source={{ uri: user.avatarUrl }} style={styles.avatar} />
+      <Image 
+        source={{ 
+          uri: user.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}` 
+        }} 
+        style={styles.avatar} 
+      />
       <View style={styles.messageContainer}>
         <Text style={styles.name}>{user.name}</Text>
         <Text style={styles.message} numberOfLines={1} ellipsizeMode="tail">

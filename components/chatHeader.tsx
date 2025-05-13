@@ -6,12 +6,12 @@ import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 interface ChatHeaderProps {
-  image: string;
-  patientName: string;
+  imageUrl: string;
+  docName: string;
   onPressPrescription: () => void;
 }
 
-export default function ChatHeader({ image, patientName, onPressPrescription }: ChatHeaderProps) {
+export default function ChatHeader({ imageUrl, docName, onPressPrescription }: ChatHeaderProps) {
   const router = useRouter();
 
   return (
@@ -19,9 +19,9 @@ export default function ChatHeader({ image, patientName, onPressPrescription }: 
       <TouchableOpacity style={styles.backIcon} onPress={() => router.back()}>
         <Ionicons name="arrow-back" size={24} color={Colors.dark.primary} />
       </TouchableOpacity>
-      <Image source={{ uri: image }} style={styles.profileImage} />
+      <Image source={{ uri: imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(docName)}` }} style={styles.profileImage} />
       <View style={styles.nameStatusContainer}>
-        <Text style={styles.docName}>{patientName}</Text>
+        <Text style={styles.docName}>{docName}</Text>
       </View>
       <View style={styles.headerIcons}>
         <TouchableOpacity onPress={onPressPrescription}>
