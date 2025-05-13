@@ -31,7 +31,7 @@ export default function LoginScreen() {
   }
 
   const handleSignUp = () => {
-    router.replace("/signup");
+    router.push("/signup");
   };
 
   const handleLogin = async () => {

@@ -4,16 +4,13 @@ import PatientSignup from "@/components/PatientSignup";
 import PrimaryButton from "@/components/PrimaryButton";
 import RoleSwitch from "@/components/RoleSwitch";
 import SecondaryLink from "@/components/SecondaryLink";
+import CheckoutForm from "@/components/checkout-form.native";
 import api from "@/utils/api"; // Adjust the path to your axios instance file
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
-import React, { useState } from "react";
-import {
-  Alert,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-} from "react-native";
+import React, { useRef, useState } from "react";
+import { Alert, SafeAreaView, ScrollView, StyleSheet, Text } from "react-native";
+
 
 export default function Signup() {
   const [selectedRole, setSelectedRole] = useState("Doctor");
@@ -21,46 +18,66 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [licenseNumber, setLicenseNumber] = useState("");
-  const [gender, setGender] = useState("Select Gender");
+  const [gender, setGender] = useState("Male");
   const [age, setAge] = useState("");
   const [designation, setDesignation] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [specialization, setSpecialization] = useState("");
+  const checkoutFormRef = useRef<{ handlePayment: () => Promise<boolean> }>(null);
 
   const handleSignup = async () => {
-    let payload = {};
-
-    if (selectedRole === "Doctor") {
-      payload = {
-        name,
-        email,
-        password,
-        user_type: "doctor",
-        license_number: licenseNumber,
-        designation,
-        specialization,
-      };
-    } else {
-      payload = {
-        name,
-        email,
-        password,
-        user_type: "patient",
-        age: age ? parseInt(age) : undefined,
-        gender,
-      };
+    if (!name || !email || !password) {
+      Alert.alert("Error", "Please fill in all required fields");
+      return;
     }
 
+    setIsLoading(true);
     try {
-      const response = await api.post("/signup", payload);
+      console.log("checkoutFormRef:", checkoutFormRef);
+      // First handle payment
+      const paymentSuccess = await checkoutFormRef.current?.handlePayment();
+      
+      if (!paymentSuccess) {
+        Alert.alert(
+          "Payment Required", 
+          "Please complete the payment to continue with registration. You can try again by clicking the Sign Up button.",
+          [{ text: "OK" }]
+        );
+        setIsLoading(false);
+        return;
+      }
 
+      // If payment successful, proceed with signup
+      let payload = {};
+      if (selectedRole === "Doctor") {
+        payload = {
+          name,
+          email,
+          password,
+          user_type: "doctor",
+          license_number: licenseNumber,
+        };
+      } else {
+        payload = {
+          name,
+          email,
+          password,
+          user_type: "patient",
+          age: age ? parseInt(age) : undefined,
+          gender,
+        };
+      }
+
+      const response = await api.post("/signup", payload);
+      console.log("Signup successful", response.data);
+
+      await AsyncStorage.removeItem("user");
+      await AsyncStorage.setItem("user", JSON.stringify(response.data));
       // Redirect based on role
       if (selectedRole === "Doctor") {
-         router.push("/(doctor)/(tabs)/doctor_dashboard");
+        router.push("/(doctor)/(tabs)/doctor_dashboard");
       } else if (selectedRole === "Patient") {
-        //TODO: update this
-         router.push("/(patient)/(tabs)/home");
-      } else {
-        Alert.alert("some error occured");
+        router.push("/home");
       }
     } catch (error: any) {
       console.error(
@@ -68,11 +85,13 @@ export default function Signup() {
         error.response ? error.response.data : error.message
       );
       Alert.alert("Signup Failed", "Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleLogin = () => {
-    router.replace("/login");
+    router.back();
   };
 
   return (
@@ -115,6 +134,7 @@ export default function Signup() {
           />
         )}
 
+        <CheckoutForm ref={checkoutFormRef} amount={1000} />
         <PrimaryButton label="Sign Up" onPress={handleSignup} />
         <Text style={styles.questionText}>Already have an account?</Text>
         <SecondaryLink text="Login" onPress={handleLogin} />

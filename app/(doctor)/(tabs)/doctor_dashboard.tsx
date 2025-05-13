@@ -73,9 +73,7 @@ export default function doctor_dashboard() {
         const doctorId = user.id;
         setDoctorName(user.name || "Doctor"); // Set doctor name for profile
 
-  
         const res = await api.get(`/doctors/${doctorId}/followups`);
-  
         const data: FollowUp[] = res.data;
         setAppointments(data);
       } catch (err: any) {
