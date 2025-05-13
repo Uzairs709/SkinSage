@@ -1,6 +1,7 @@
 // components/InputBar.tsx
 import { Colors } from "@/constants/Colors";
 import { Entypo, Ionicons } from "@expo/vector-icons";
+import * as ImagePicker from 'expo-image-picker';
 import React from "react";
 import {
   NativeSyntheticEvent,
@@ -15,7 +16,7 @@ interface InputBarProps {
   text: string;
   onTextChange: (text: string) => void;
   onSend: () => void;
-  onPickImage: () => void;
+  onPickImage: (imageUri: string) => void;
 }
 
 export default function InputBar({
@@ -30,9 +31,29 @@ export default function InputBar({
     }
   };
 
+  const handleImagePick = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+    if (status !== 'granted') {
+      alert('Sorry, we need camera roll permissions to make this work!');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.canceled && result.assets[0].uri) {
+      onPickImage(result.assets[0].uri);
+    }
+  };
+
   return (
     <View style={styles.inputContainer}>
-      <TouchableOpacity onPress={onPickImage}>
+      <TouchableOpacity onPress={handleImagePick}>
         <Entypo name="image" size={24} color={Colors.dark.primary} />
       </TouchableOpacity>
       <TextInput
@@ -42,7 +63,6 @@ export default function InputBar({
         onChangeText={onTextChange}
         onSubmitEditing={handleSubmit}
         returnKeyType="send"
-        blurOnSubmit={false}
       />
       <TouchableOpacity onPress={onSend}>
         <Ionicons name="send" size={24} color={Colors.dark.primary} />

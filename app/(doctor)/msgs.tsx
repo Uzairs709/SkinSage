@@ -40,10 +40,11 @@ export default function Messages() {
         
         // Convert ChatMessage[] to Message[]
         const formattedMessages: Message[] = history.map(msg => ({
-          id: msg.id,
-          sender: msg.sender_id === user.id ? "doctor" : "patient",
-          text: msg.content,
-          image_ai_generated: msg.is_ai_generated,
+          id:           msg.id,
+          sender:       msg.sender_id === user.id ? "doctor" : "patient",
+          content:      msg.content,
+          isImage:      msg.is_image,
+          isAI:         msg.is_ai_generated,
         }));
 
         setMessages(formattedMessages);
@@ -56,7 +57,7 @@ export default function Messages() {
     fetchChatHistory();
     
     // Set up polling
-    const intervalId = setInterval(fetchChatHistory, 3000);
+    const intervalId = setInterval(fetchChatHistory, 2000);
 
     // Cleanup
     return () => clearInterval(intervalId);
@@ -66,7 +67,7 @@ export default function Messages() {
     if (!text) return;
 
     try {
-      const textTOsend=text;
+      const textTOsend = text;
       setText("");
       const userData = await AsyncStorage.getItem("user");
       if (!userData) {
@@ -85,12 +86,42 @@ export default function Messages() {
       const newMsg: Message = {
         id: response.message_id,
         sender: "doctor",
-        text:textTOsend,
+        text: textTOsend,
       };
 
       setMessages((prev) => [...prev, newMsg]);
     } catch (error) {
       console.error("Failed to send message:", error);
+    }
+  };
+
+  const handleImagePick = async (imageUri: string) => {
+    try {
+      const userData = await AsyncStorage.getItem("user");
+      if (!userData) {
+        console.error("User not found");
+        return;
+      }
+
+      const user = JSON.parse(userData);
+      const response = await sendMessage({
+        patient_id: parseInt(patientId),
+        doctor_id: user.id,
+        sender_id: user.id,
+        content: imageUri,
+        is_image: true
+      });
+
+      const newMsg: Message = {
+        id: response.message_id,
+        sender: "doctor",
+        imageUri: imageUri,
+        is_image: true
+      };
+
+      setMessages((prev) => [...prev, newMsg]);
+    } catch (error) {
+      console.error("Failed to send image:", error);
     }
   };
 
@@ -126,6 +157,7 @@ export default function Messages() {
         text={text}
         onTextChange={setText}
         onSend={handleSend}
+        onPickImage={handleImagePick}
       />
 
       <PrescriptionModal

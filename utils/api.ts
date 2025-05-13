@@ -74,6 +74,8 @@ export interface Message {
   id: number;
   sender: "patient" | "doctor";
   text?: string;
+  imageUri?: string;
+  is_image?: boolean;
   image_ai_generated?: boolean;
   ai_analysis?: string;
 }
@@ -83,6 +85,7 @@ export interface SendMessageRequest {
   doctor_id: number;
   sender_id: number;
   content: string;
+  is_image?: boolean;
 }
 
 export interface SendMessageResponse {

@@ -4,8 +4,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { FlatList, SafeAreaView, StyleSheet } from "react-native";
 
 import ChatHeader from "@/components/chatHeader";
+import DoctorInputBar from "@/components/DoctorMessageInputBar";
 import MessageBubble from "@/components/MessageBubble";
-import InputBar from "@/components/MessageInputBar";
 import PrescriptionModal from "@/components/PrescriptionModal";
 import { getChatHistory, Message, sendMessage } from "@/utils/api";
 
@@ -39,13 +39,14 @@ export default function Messages() {
 
                 const user = JSON.parse(userData);
                 const history = await getChatHistory(user.id, parseInt(docId));
-                
+
                 // Convert ChatMessage[] to Message[]
                 const formattedMessages: Message[] = history.map(msg => ({
                     id: msg.id,
                     sender: msg.sender_id === user.id ? "patient" : "doctor",
-                    text: msg.content,
-                    image_ai_generated: msg.is_ai_generated,
+                    content: msg.content,
+                    isImage: msg.is_image,
+                    isAI: msg.is_ai_generated,
                 }));
 
                 setMessages(formattedMessages);
@@ -56,9 +57,9 @@ export default function Messages() {
 
         // Initial fetch
         fetchChatHistory();
-        
+
         // Set up polling
-        const intervalId = setInterval(fetchChatHistory, 3000);
+        const intervalId = setInterval(fetchChatHistory, 2000);
 
         // Cleanup
         return () => clearInterval(intervalId);
@@ -68,7 +69,7 @@ export default function Messages() {
         if (!text) return;
 
         try {
-            const textTOsend=text;
+            const textTOsend = text;
             setText("");
             const userData = await AsyncStorage.getItem("user");
             if (!userData) {
@@ -93,6 +94,36 @@ export default function Messages() {
             setMessages((prev) => [...prev, newMsg]);
         } catch (error) {
             console.error("Failed to send message:", error);
+        }
+    };
+
+    const handleImagePick = async (imageUri: string) => {
+        try {
+            const userData = await AsyncStorage.getItem("user");
+            if (!userData) {
+                console.error("User not found");
+                return;
+            }
+
+            const user = JSON.parse(userData);
+            const response = await sendMessage({
+                patient_id: user.id,
+                doctor_id: parseInt(docId),
+                sender_id: user.id,
+                content: imageUri,
+                is_image: true
+            });
+
+            const newMsg: Message = {
+                id: response.message_id,
+                sender: userType,
+                imageUri: imageUri,
+                is_image: true
+            };
+
+            setMessages((prev) => [...prev, newMsg]);
+        } catch (error) {
+            console.error("Failed to send image:", error);
         }
     };
 
@@ -123,11 +154,11 @@ export default function Messages() {
                 onLayout={scrollToBottom}
             />
 
-            <InputBar
+            <DoctorInputBar
                 text={text}
                 onTextChange={setText}
                 onSend={handleSend}
-                onPickImage={() => {}}
+                onPickImage={handleImagePick}
             />
 
             <PrescriptionModal
