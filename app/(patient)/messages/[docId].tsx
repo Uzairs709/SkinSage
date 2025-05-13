@@ -4,10 +4,16 @@ import React, { useEffect, useRef, useState } from "react";
 import { FlatList, SafeAreaView, StyleSheet } from "react-native";
 
 import ChatHeader from "@/components/chatHeader";
-import DoctorInputBar from "@/components/DoctorMessageInputBar";
 import MessageBubble from "@/components/MessageBubble";
+import InputBar from "@/components/MessageInputBar";
 import PrescriptionModal from "@/components/PrescriptionModal";
-import { getChatHistory, Message, sendMessage } from "@/utils/api";
+import axios, { convertToJpegAsync, getChatHistory, Message, sendMessage } from "@/utils/api";
+
+interface PrescriptionMedication {
+    medicine: string;
+    qty: number;
+  }
+  
 
 export default function Messages() {
     const { docId, name, image } = useLocalSearchParams<{
@@ -17,16 +23,27 @@ export default function Messages() {
     }>();
     const [modalVisible, setModalVisible] = useState(false);
     const userType = "patient" as const;
+    const [viewModalVisible, setViewModalVisible] = useState(false);
+    const [patienId, setPatienId] = useState<number | null>(null);
 
     const [messages, setMessages] = useState<Message[]>([]);
     const [text, setText] = useState("");
-    const [prescriptions] = useState([
-        { medication: "Hydrocortisone cream", quantity: "1 tube" },
-        { medication: "Antihistamine", quantity: "30 tablets" },
-    ]);
-    const noteText = "Take with food and drink plenty of water.";
+    const [prescriptions, setPrescriptions] = useState<PrescriptionMedication[]>([]);
+        
+    const [noteText, setNoteText] = useState("");
 
     const flatListRef = useRef<FlatList>(null);
+
+    useEffect(() => {
+        const fetchPatientId = async () => {
+          const userData = await AsyncStorage.getItem("user");
+          if (userData) {
+            const user = JSON.parse(userData);
+            setPatienId(user.id);
+          }
+        };
+        fetchPatientId();
+      }, []);
 
     useEffect(() => {
         const fetchChatHistory = async () => {
@@ -99,46 +116,89 @@ export default function Messages() {
 
     const handleImagePick = async (imageUri: string) => {
         try {
-            const userData = await AsyncStorage.getItem("user");
-            if (!userData) {
-                console.error("User not found");
-                return;
-            }
-
-            const user = JSON.parse(userData);
-            const response = await sendMessage({
-                patient_id: user.id,
-                doctor_id: parseInt(docId),
-                sender_id: user.id,
-                content: imageUri,
-                is_image: true
-            });
-
-            const newMsg: Message = {
-                id: response.message_id,
-                sender: userType,
-                imageUri: imageUri,
-                is_image: true
-            };
-
-            setMessages((prev) => [...prev, newMsg]);
+          const userData = await AsyncStorage.getItem("user");
+          if (!userData) return;
+          const user = JSON.parse(userData);
+    
+          // convert any format to JPEG
+          const jpegUri = await convertToJpegAsync(imageUri);
+          const fileName = jpegUri.split("/").pop() || "photo.jpg";
+          const fileType = "image/jpeg";
+    
+          const response = await sendMessage({
+            patient_id: user.id,
+            doctor_id: parseInt(docId),
+            sender_id: user.id,
+            is_image: true,
+            file: { uri: jpegUri, name: fileName, type: fileType },
+          });
+    
+          const newMsg: Message = {
+            id: response.message_id,
+            sender: userType,
+            imageUri: jpegUri,
+            is_image: true,
+          };
+    
+          setMessages(prev => [...prev, newMsg]);
         } catch (error) {
-            console.error("Failed to send image:", error);
+          console.error("Failed to send image:", error);
         }
-    };
-
+      };
+    
+    
     const scrollToBottom = () => {
         if (flatListRef.current) {
             flatListRef.current.scrollToEnd({ animated: true });
         }
     };
-
+      const openViewModal = async () => {
+        try {
+          const res = await axios.get("/prescriptions", {
+            params: {
+              doctor_id: docId,
+              patient_id: parseInt(patienId),
+            }
+          });
+      
+          // res.data is PrescriptionResponse[]
+          const arr = res.data as Array<{
+            id: number;
+            patient_id: number;
+            doctor_id: number;
+            prescription_date: string;
+            medication: { medicine: string; qty: number }[];
+            instructions?: string;
+          }>;
+      
+          if (arr.length > 0) {
+            // take the most recent (first) record
+            const latest = arr[0];
+            setPrescriptions(latest.medication);
+            setNoteText(latest.instructions || "");
+          } else {
+            setPrescriptions([]);
+            setNoteText("");
+          }
+          setViewModalVisible(true);
+        } catch (err: any) {
+          if (err.response?.status === 404) {
+            setPrescriptions([]);
+            setNoteText("");
+            setViewModalVisible(true);
+          } else {
+            console.error("Failed to fetch prescription:", err);
+          }
+        
+        }
+      };
+      
     return (
         <SafeAreaView style={styles.container}>
             <ChatHeader
                 imageUrl={image}
                 docName={name}
-                onPressPrescription={() => setModalVisible(true)}
+                onPressPrescription={openViewModal}
             />
 
             <FlatList
@@ -154,7 +214,7 @@ export default function Messages() {
                 onLayout={scrollToBottom}
             />
 
-            <DoctorInputBar
+            <InputBar
                 text={text}
                 onTextChange={setText}
                 onSend={handleSend}
@@ -162,10 +222,13 @@ export default function Messages() {
             />
 
             <PrescriptionModal
-                visible={modalVisible}
-                onClose={() => setModalVisible(false)}
-                prescriptions={prescriptions}
+                visible={viewModalVisible}
+                onClose={() => setViewModalVisible(false)}
+                prescriptions={prescriptions}      // always an array now
                 noteText={noteText}
+                isViewOnly={true}
+                doctorId={parseInt(docId)}
+                patientId={parseInt(patienId)}
             />
         </SafeAreaView>
     );

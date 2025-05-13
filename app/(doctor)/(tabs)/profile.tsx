@@ -8,6 +8,8 @@ interface User {
   name: string;
   email: string;
   license_number?: string;
+  doc_designation?: string;
+  doc_specialization?: string;
 }
 
 const Profile = () => {
@@ -42,6 +44,8 @@ const Profile = () => {
               value={user.license_number || 'N/A'}
               labelWidth={80}
             />
+            <InfoField label="Designation" value={user.doc_designation || 'N/A'} labelWidth={83} />
+            <InfoField label="Specialization" value={user.doc_specialization || 'N/A'} labelWidth={99} />
           </>
         ) : (
           <Text style={styles.loading}>Loading profile...</Text>

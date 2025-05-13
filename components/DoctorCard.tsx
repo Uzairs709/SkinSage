@@ -1,7 +1,9 @@
 // components/DoctorCard.tsx
 import { Colors } from "@/constants/Colors";
+import { sendMessage } from "@/utils/api";
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from 'expo-image-picker';
 import React from "react";
 import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -36,36 +38,65 @@ export const DoctorCard = ({ doctor, expanded, toggleProfile, onChat }: Props) =
         cancelButtonIndex,
       },
       async (selectedIndex) => {
-        if (selectedIndex === 0) {
-          // Take Photo
-          const { status } = await ImagePicker.requestCameraPermissionsAsync();
-          if (status !== 'granted') {
-            Alert.alert('Permission needed', 'Please grant camera permissions to take photos');
+        try {
+          // Get patient ID from AsyncStorage
+          const userData = await AsyncStorage.getItem("user");
+          if (!userData) {
+            Alert.alert("Error", "User not found");
             return;
           }
-          const result = await ImagePicker.launchCameraAsync({
-            mediaTypes: 'images',
-            allowsEditing: true,
-            quality: 1,
-          });
-          if (!result.canceled && result.assets[0].uri) {
-            onChat(doctor.id, doctor.name, result.assets[0].uri);
+          const user = JSON.parse(userData);
+          const patientId = user.id;
+
+          let imageUri: string | null = null;
+
+          if (selectedIndex === 0) {
+            // Take Photo
+            const { status } = await ImagePicker.requestCameraPermissionsAsync();
+            if (status !== 'granted') {
+              Alert.alert('Permission needed', 'Please grant camera permissions to take photos');
+              return;
+            }
+            const result = await ImagePicker.launchCameraAsync({
+              mediaTypes: 'images',
+              allowsEditing: true,
+              quality: 1,
+            });
+            if (!result.canceled && result.assets[0].uri) {
+              imageUri = result.assets[0].uri;
+            }
+          } else if (selectedIndex === 1) {
+            // Choose from Gallery
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status !== 'granted') {
+              Alert.alert('Permission needed', 'Please grant gallery permissions to select images');
+              return;
+            }
+            const result = await ImagePicker.launchImageLibraryAsync({
+              mediaTypes: 'images',
+              allowsEditing: true,
+              quality: 1,
+            });
+            if (!result.canceled && result.assets[0].uri) {
+              imageUri = result.assets[0].uri;
+            }
           }
-        } else if (selectedIndex === 1) {
-          // Choose from Gallery
-          const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-          if (status !== 'granted') {
-            Alert.alert('Permission needed', 'Please grant gallery permissions to select images');
-            return;
+
+          if (imageUri) {
+            const fileName = imageUri.split("/").pop() || "photo.jpg";
+            await sendMessage({
+              patient_id:patientId,
+              doctor_id: doctor.id,
+              sender_id: patientId,
+              is_image: true,
+              file: { uri: imageUri, name: fileName, type: "image/jpeg" },
+            });
+            onChat(doctor.id, doctor.name);
           }
-          const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: 'images',
-            allowsEditing: true,
-            quality: 1,
-          });
-          if (!result.canceled && result.assets[0].uri) {
-            onChat(doctor.id, doctor.name, result.assets[0].uri);
-          }
+        } catch (error) {
+          console.error("Error sending image:", error);
+          console.log(error);
+          Alert.alert("Error", "Failed to send image. Please try again.");
         }
       }
     );

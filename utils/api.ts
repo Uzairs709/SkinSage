@@ -84,10 +84,13 @@ export interface SendMessageRequest {
   patient_id: number;
   doctor_id: number;
   sender_id: number;
-  content: string;
-  is_image?: boolean;
+  // only required if sending text
+  content?: string;
+  // true if sending an image
+  is_image: boolean;
+  // only required if is_image===true
+  file?: { uri: string; name: string; type: string };
 }
-
 export interface SendMessageResponse {
   conversation_id: number;
   message_id: number;
@@ -95,7 +98,39 @@ export interface SendMessageResponse {
 }
 
 export async function sendMessage(payload: SendMessageRequest): Promise<SendMessageResponse> {
-  const response = await api.post('/chat/send', payload);
+  const form = new FormData();
+
+  // append all your form fields
+  form.append("patient_id", String(payload.patient_id));
+  form.append("doctor_id", String(payload.doctor_id));
+  form.append("sender_id", String(payload.sender_id));
+  form.append("is_image", payload.is_image ? "true" : "false");
+
+  if (payload.is_image) {
+    if (!payload.file) {
+      throw new Error("File object is required when is_image=true");
+    }
+    // this is the critical piece: send the binary
+    form.append("file", {
+      uri: payload.file.uri,
+      name: payload.file.name,
+      type: payload.file.type,
+    } as any);
+  } else {
+    // text message path
+    if (!payload.content) {
+      throw new Error("content is required for text messages");
+    }
+    form.append("content", payload.content);
+  }
+
+  const response = await api.post("/chat/send", form, {
+    headers: {
+      // let axios set the correct multipart boundary
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
   return response.data;
 }
 

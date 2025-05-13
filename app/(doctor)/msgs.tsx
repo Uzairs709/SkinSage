@@ -1,14 +1,17 @@
-// /app/messages/[docId].tsx
-
 import DoctorChatHeader from "@/components/DoctorChatHeader";
 import DoctorMessageInputBar from "@/components/DoctorMessageInputBar";
 import MessageBubble from "@/components/MessageBubble";
 import PrescriptionModal from "@/components/PrescriptionModal";
-import { getChatHistory, Message, sendMessage } from "@/utils/api";
+import axios, { getChatHistory, Message, sendMessage } from "@/utils/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import { FlatList, SafeAreaView, StyleSheet } from "react-native";
+
+interface PrescriptionMedication {
+  medicine: string;
+  qty: number;
+}
 
 export default function Messages() {
   const flatListRef = useRef<FlatList>(null);
@@ -21,122 +24,117 @@ export default function Messages() {
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [text, setText] = useState("");
-  const [prescriptions] = useState([
-    { medication: "Hydrocortisone cream", quantity: "1 tube" },
-    { medication: "Antihistamine", quantity: "30 tablets" },
-  ]);
+  const [prescriptions, setPrescriptions] = useState<PrescriptionMedication[]>([]);
+  const [noteText, setNoteText] = useState("");
+  const [doctorId, setDoctorId] = useState<number | null>(null);
 
   useEffect(() => {
-    const fetchChatHistory = async () => {
-      try {
-        const userData = await AsyncStorage.getItem("user");
-        if (!userData) {
-          console.error("User not found");
-          return;
-        }
-
+    const fetchDoctorId = async () => {
+      const userData = await AsyncStorage.getItem("user");
+      if (userData) {
         const user = JSON.parse(userData);
-        const history = await getChatHistory(parseInt(patientId), user.id);
-        
-        // Convert ChatMessage[] to Message[]
-        const formattedMessages: Message[] = history.map(msg => ({
-          id:           msg.id,
-          sender:       msg.sender_id === user.id ? "doctor" : "patient",
-          content:      msg.content,
-          isImage:      msg.is_image,
-          isAI:         msg.is_ai_generated,
-        }));
-
-        setMessages(formattedMessages);
-      } catch (error) {
-        console.error("Failed to fetch chat history:", error);
+        setDoctorId(user.id);
       }
     };
+    fetchDoctorId();
+  }, []);
 
-    // Initial fetch
+  const fetchChatHistory = async () => {
+    try {
+      const userData = await AsyncStorage.getItem("user");
+      if (!userData) return;
+      const user = JSON.parse(userData);
+      const history = await getChatHistory(parseInt(patientId), user.id);
+      const formattedMessages: Message[] = history.map(msg => ({
+        id: msg.id,
+        sender: msg.sender_id === user.id ? "doctor" : "patient",
+        content: msg.content,
+        isImage: msg.is_image,
+        isAI: msg.is_ai_generated,
+      }));
+      setMessages(formattedMessages);
+    } catch (error) {
+      console.error("Chat fetch error:", error);
+    }
+  };
+
+  useEffect(() => {
     fetchChatHistory();
-    
-    // Set up polling
-    const intervalId = setInterval(fetchChatHistory, 2000);
-
-    // Cleanup
-    return () => clearInterval(intervalId);
+    const interval = setInterval(fetchChatHistory, 2000);
+    return () => clearInterval(interval);
   }, [patientId]);
 
   const handleSend = async () => {
     if (!text) return;
-
     try {
-      const textTOsend = text;
+      const userData = await AsyncStorage.getItem("user");
+      if (!userData) return;
+      const user = JSON.parse(userData);
+      const response = await sendMessage({
+        patient_id: parseInt(patientId),
+        doctor_id: user.id,
+        sender_id: user.id,
+        content: text,
+        is_image: false
+      });
+      setMessages(prev => [...prev, {
+        id: response.message_id,
+        sender: "doctor",
+        text: text,
+      }]);
       setText("");
-      const userData = await AsyncStorage.getItem("user");
-      if (!userData) {
-        console.error("User not found");
-        return;
-      }
-
-      const user = JSON.parse(userData);
-      const response = await sendMessage({
-        patient_id: parseInt(patientId),
-        doctor_id: user.id,
-        sender_id: user.id,
-        content: textTOsend
-      });
-
-      const newMsg: Message = {
-        id: response.message_id,
-        sender: "doctor",
-        text: textTOsend,
-      };
-
-      setMessages((prev) => [...prev, newMsg]);
-    } catch (error) {
-      console.error("Failed to send message:", error);
+    } catch (err) {
+      console.error("Message send failed:", err);
     }
   };
 
-  const handleImagePick = async (imageUri: string) => {
+  
+  const openViewModal = async () => {
     try {
-      const userData = await AsyncStorage.getItem("user");
-      if (!userData) {
-        console.error("User not found");
-        return;
-      }
-
-      const user = JSON.parse(userData);
-      const response = await sendMessage({
-        patient_id: parseInt(patientId),
-        doctor_id: user.id,
-        sender_id: user.id,
-        content: imageUri,
-        is_image: true
+      const res = await axios.get("/prescriptions", {
+        params: {
+          doctor_id: doctorId,
+          patient_id: parseInt(patientId),
+        }
       });
-
-      const newMsg: Message = {
-        id: response.message_id,
-        sender: "doctor",
-        imageUri: imageUri,
-        is_image: true
-      };
-
-      setMessages((prev) => [...prev, newMsg]);
-    } catch (error) {
-      console.error("Failed to send image:", error);
+  
+      // res.data is PrescriptionResponse[]
+      const arr = res.data as Array<{
+        id: number;
+        patient_id: number;
+        doctor_id: number;
+        prescription_date: string;
+        medication: { medicine: string; qty: number }[];
+        instructions?: string;
+      }>;
+  
+      if (arr.length > 0) {
+        // take the most recent (first) record
+        const latest = arr[0];
+        setPrescriptions(latest.medication);
+        setNoteText(latest.instructions || "");
+      } else {
+        setPrescriptions([]);
+        setNoteText("");
+      }
+      setViewModalVisible(true);
+    } catch (err: any) {
+      if (err.response?.status === 404) {
+        setPrescriptions([]);
+        setNoteText("");
+        setViewModalVisible(true);
+      } else {
+        console.error("Failed to fetch prescription:", err);
+      }
     }
   };
-
-  const scrollToBottom = () => {
-    if (flatListRef.current) {
-      flatListRef.current.scrollToEnd({ animated: true });
-    }
-  };
-
+  
   return (
     <SafeAreaView style={styles.container}>
       <DoctorChatHeader
         image={patientImage}
         patientName={patientName}
-        onViewPrescription={() => setViewModalVisible(true)}
+        onViewPrescription={openViewModal}
         onAddPrescription={() => setAddModalVisible(true)}
       />
 
@@ -149,32 +147,24 @@ export default function Messages() {
         )}
         style={{ flex: 1 }}
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 16 }}
-        onContentSizeChange={scrollToBottom}
-        onLayout={scrollToBottom}
       />
 
       <DoctorMessageInputBar
         text={text}
         onTextChange={setText}
         onSend={handleSend}
-        onPickImage={handleImagePick}
       />
 
       <PrescriptionModal
         visible={viewModalVisible}
         onClose={() => setViewModalVisible(false)}
-        prescriptions={prescriptions}
-        noteText="Take with food and drink plenty of water."
-        isViewOnly={true}
+        prescriptions={prescriptions}      // always an array now
+        noteText={noteText}
+        isViewOnly={false}
+        doctorId={doctorId}
+        patientId={parseInt(patientId)}
       />
 
-      <PrescriptionModal
-        visible={addModalVisible}
-        onClose={() => setAddModalVisible(false)}
-        prescriptions={prescriptions}
-        noteText="Take with food and drink plenty of water."
-        isViewOnly={false}
-      />
     </SafeAreaView>
   );
 }
