@@ -11,6 +11,8 @@ export interface User {
   license_number?: string;
   age?: number;
   gender?: string;
+  doc_designation?: string;
+  doc_specialization?: string;
 }
 
 interface AuthContextProps {
@@ -45,6 +47,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         headers: { "X-User-Token": JwtToken, },
       });
       setUser(resp.data);
+      console.log(resp.data);
       await AsyncStorage.setItem("user", JSON.stringify(resp.data));
     } catch (err) {
       
