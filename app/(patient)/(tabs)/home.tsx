@@ -71,6 +71,7 @@ export default function Home() {
     };
 
     fetchDoctors();
+  
   }, [user.token]);
 
   const toggleProfile = (id: number) => {

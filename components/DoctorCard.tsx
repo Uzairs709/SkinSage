@@ -84,7 +84,7 @@ export const DoctorCard = ({ doctor, expanded, toggleProfile, onChat }: Props) =
 
           if (imageUri) {
             const fileName = imageUri.split("/").pop() || "photo.jpg";
-            await sendMessage({
+            const res = await sendMessage({
               patient_id:patientId,
               doctor_id: doctor.id,
               sender_id: patientId,

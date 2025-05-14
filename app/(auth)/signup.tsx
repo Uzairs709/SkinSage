@@ -33,7 +33,6 @@ export default function Signup() {
 
     setIsLoading(true);
     try {
-      console.log("checkoutFormRef:", checkoutFormRef);
       // First handle payment
       const paymentSuccess = await checkoutFormRef.current?.handlePayment();
       
@@ -56,6 +55,8 @@ export default function Signup() {
           password,
           user_type: "doctor",
           license_number: licenseNumber,
+          doc_designation: designation,
+          doc_specialization: specialization,
         };
       } else {
         payload = {
@@ -69,7 +70,6 @@ export default function Signup() {
       }
 
       const response = await api.post("/signup", payload);
-      console.log("Signup successful", response.data);
 
       await AsyncStorage.removeItem("user");
       await AsyncStorage.setItem("user", JSON.stringify(response.data));
