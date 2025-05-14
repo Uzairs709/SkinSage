@@ -1,5 +1,6 @@
 import DoctorChatHeader from "@/components/DoctorChatHeader";
 import DoctorMessageInputBar from "@/components/DoctorMessageInputBar";
+import FollowUpModal from "@/components/followUpModal";
 import MessageBubble from "@/components/MessageBubble";
 import PrescriptionModal from "@/components/PrescriptionModal";
 import axios, { getChatHistory, Message, sendMessage } from "@/utils/api";
@@ -22,6 +23,7 @@ export default function Messages() {
   }>();
   const [viewModalVisible, setViewModalVisible] = useState(false);
   const [addModalVisible, setAddModalVisible] = useState(false);
+  const [followUpModalVisible, setFollowUpModalVisible] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [text, setText] = useState("");
   const [prescriptions, setPrescriptions] = useState<PrescriptionMedication[]>([]);
@@ -135,7 +137,7 @@ export default function Messages() {
         image={patientImage}
         patientName={patientName}
         onViewPrescription={openViewModal}
-        onAddPrescription={() => setAddModalVisible(true)}
+        onAddFollowUp={() => setFollowUpModalVisible(true)}
       />
 
       <FlatList
@@ -161,6 +163,12 @@ export default function Messages() {
         prescriptions={prescriptions}      // always an array now
         noteText={noteText}
         isViewOnly={false}
+        doctorId={doctorId}
+        patientId={parseInt(patientId)}
+      />
+      <FollowUpModal
+        visible={followUpModalVisible}
+        onClose={() => setFollowUpModalVisible(false)}
         doctorId={doctorId}
         patientId={parseInt(patientId)}
       />

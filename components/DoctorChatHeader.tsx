@@ -8,14 +8,14 @@ interface DoctorChatHeaderProps {
   image: string;
   patientName: string;
   onViewPrescription: () => void;
-  onAddPrescription: () => void;
+  onAddFollowUp: () => void;
 }
 
 export default function DoctorChatHeader({
   image,
   patientName,
   onViewPrescription,
-  onAddPrescription,
+  onAddFollowUp,
 }: DoctorChatHeaderProps) {
   const router = useRouter();
 
@@ -37,7 +37,7 @@ export default function DoctorChatHeader({
         </TouchableOpacity>
         <TouchableOpacity 
           style={styles.iconButton} 
-          onPress={onAddPrescription}
+          onPress={onAddFollowUp}
         >
           <Ionicons name="add-circle" size={20} color={Colors.dark.primary} />
         </TouchableOpacity>

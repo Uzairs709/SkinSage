@@ -83,6 +83,8 @@ export default function doctor_dashboard() {
       }
     };
     fetchAppointments();
+    const interval = setInterval(fetchAppointments, 20000);
+    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -122,9 +124,9 @@ export default function doctor_dashboard() {
 
 const styles = StyleSheet.create({
   safeArea: {
-    marginTop: 30,
+    paddingTop: 30,
     flex: 1, // Ensures the container takes up the full screen height and width
-    backgroundColor: "#fff", // Set background color for the whole screen
+    backgroundColor: "#ffffff", // Set background color for the whole screen
   },
   dashboardContainer: {
     flexGrow: 1, // Allows content to take up all available space inside ScrollView
@@ -148,7 +150,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     width: "100%",
     paddingHorizontal: 10,
-    marginTop: 10,
+    paddingTop: 10,
   },
   chatButton: {
     padding: -10,

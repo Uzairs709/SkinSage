@@ -34,6 +34,8 @@ export default function ChatList() {
     };
 
     fetchConversations();
+    const interval = setInterval(fetchConversations, 2000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleOpenChat = (id: number, name: string, image: string) => {
@@ -79,7 +81,7 @@ export default function ChatList() {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="#3e663e" />
+          <Ionicons name="arrow-back" size={24} color="#3e663e" style={{ marginLeft: 10, paddingTop: 12 }} />
         </TouchableOpacity>
         <Text style={styles.heading}>Chats</Text>
       </View>
@@ -101,7 +103,7 @@ export default function ChatList() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff", padding: 16, marginTop: 20 },
+  container: { flex: 1, backgroundColor: "#fff", padding: 16, paddingTop: 20 },
   heading: { fontSize: 22, fontWeight: "bold", marginLeft: 10, marginTop: 10 },
   header: { flexDirection: "row", alignItems: "center", marginBottom: 0 },
   loadingContainer: {

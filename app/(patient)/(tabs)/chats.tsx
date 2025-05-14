@@ -41,6 +41,8 @@ export default function ChatList() {
     };
 
     fetchConversations();
+    const interval = setInterval(fetchConversations, 20000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleOpenChat = (id: number, name: string, image: string) => {
