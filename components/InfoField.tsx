@@ -71,8 +71,7 @@ const InfoField: React.FC<InfoFieldProps> = ({
         placeholderTextColor="#6B7280"
         placeholder={placeholder}
         autoCapitalize="none"
-        secureTextEntry={isPassword || inputType === 'password'}
-        keyboardType={getKeyboardType()}
+        secureTextEntry={isPassword && inputType === 'password'}
       />
     </View>
   );

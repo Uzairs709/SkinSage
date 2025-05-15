@@ -114,7 +114,7 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff", paddingTop: 50 },
+  container: { flex: 1, backgroundColor: "#fff", paddingTop: 30, paddingBottom: 50 },
   header: { paddingHorizontal: 20, paddingBottom: 20 },
   welcomeText: { fontSize: 16, color: "#34673D" },
   patientName: { fontSize: 24, fontWeight: "bold", color: Colors.dark.primary },
