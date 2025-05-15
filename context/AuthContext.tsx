@@ -47,7 +47,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         headers: { "X-User-Token": JwtToken, },
       });
       setUser(resp.data);
-      console.log(resp.data);
       await AsyncStorage.setItem("user", JSON.stringify(resp.data));
     } catch (err) {
       
